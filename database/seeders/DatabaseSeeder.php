@@ -2,9 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\GradeEntry;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Contracts\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,11 +15,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $this->call([
+            RoleSeeder::class,
+            TenantSeeder::class,
+            UserSeeder::class,
+            AcademicYearSeeder::class,
+            GradeLevelSeeder::class,
+            SubjectSeeder::class,
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
         ]);
     }
 }

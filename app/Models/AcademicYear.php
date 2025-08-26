@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AcademicYear extends Model
 {
     //
-    protected $table = 'academic_year';
+    protected $table = 'academic_years';
 
     protected $fillable = [
         'code',

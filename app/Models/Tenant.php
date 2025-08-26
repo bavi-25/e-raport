@@ -15,6 +15,4 @@ class Tenant extends Model
         'level',
         'status',
     ];
-
-    
 }
