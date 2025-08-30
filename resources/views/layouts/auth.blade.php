@@ -19,7 +19,7 @@
 
     <body class="hold-transition login-page">
         <div class="login-box">
-           @yield('content')
+            @yield('content')
             <!-- /.card -->
         </div>
         <!-- /.login-box -->

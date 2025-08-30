@@ -31,6 +31,13 @@
         <link rel="stylesheet" href="/assets/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css">
         <link rel="stylesheet" href="/assets/plugins/datatables-responsive/css/responsive.bootstrap4.min.css">
         <link rel="stylesheet" href="/assets/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
+        <!-- Select2 -->
+        <link rel="stylesheet" href="/assets/plugins/select2/css/select2.min.css">
+        <link rel="stylesheet" href="/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+        <!-- SweetAlert2 -->
+        <link rel="stylesheet" href="/assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
+        <!-- Toastr -->
+        <link rel="stylesheet" href="/assets/plugins/toastr/toastr.min.css">
 
     </head>
 
@@ -257,6 +264,15 @@
                                     </p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.class_rooms.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.class_rooms.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-list-ol"></i>
+                                    <p>
+                                        Class Rooms
+                                    </p>
+                                </a>
+                            </li>
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->
@@ -352,24 +368,64 @@
         <script src="/assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
         <script src="/assets/plugins/datatables-buttons/js/buttons.print.min.js"></script>
         <script src="/assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
+        <!-- Select2 -->
+        <script src="/assets/plugins/select2/js/select2.full.min.js"></script>
+        <!-- SweetAlert2 -->
+        <script src="/assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+        <!-- Toastr -->
+        <script src="/assets/plugins/toastr/toastr.min.js"></script>
 
         <script>
             $(function () {
-            $("#example1").DataTable({
-              "responsive": true, "lengthChange": false, "autoWidth": false,
-              "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-            $('#example2').DataTable({
-              "paging": true,
-              "lengthChange": false,
-              "searching": false,
-              "ordering": true,
-              "info": true,
-              "autoWidth": false,
-              "responsive": true,
-            });
+                $("#example1").DataTable({
+                "responsive": true, "lengthChange": false, "autoWidth": false,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+
+                $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false,
+                "responsive": true,
+                });
+
+                $('.select2').select2()
+
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
           });
         </script>
+        <script>
+            @if (session('success'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                Toast.fire({
+                    icon: 'success',
+                    title: '{{ session('success') }}'
+                })
+            @endif
+            @if (session('error'))
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                Toast.fire({
+                    icon: 'error',
+                    title: '{{ session('error') }}'
+                })
+            @endif
+        </script>
+
     </body>
 
 </html>
