@@ -21,9 +21,8 @@ class AuthController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|string',
-            'remember' => 'sometimes|boolean',
+            'remember' => 'sometimes',
         ]);
-        
         $credentials = $request->only('email', 'password');
 
         if (Auth::attempt($credentials, $request->filled('remember'))) {
@@ -42,5 +41,4 @@ class AuthController extends Controller
         Auth::logout();
         return redirect()->route('login');
     }
-
 }
