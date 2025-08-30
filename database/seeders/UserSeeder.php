@@ -20,12 +20,13 @@ class UserSeeder extends Seeder
     {
         //
         DB::transaction(function () {
+            // Super Admin
             $superAdmin = User::updateOrCreate(
                 ['email' => 'superadmin@erapor.local'],
                 [
                     'name'              => 'Super Admin',
-                    'password'          => Hash::make('passwordSuperAdmin!'), // ganti di production
-                    'tenant_id'         => 1, // atau pilih salah satu tenant_id jika diinginkan
+                    'password'          => Hash::make('passwordSuperAdmin!'),
+                    'tenant_id'         => 1,
                     'email_verified_at' => now(),
                 ]
             );
@@ -46,11 +47,13 @@ class UserSeeder extends Seeder
 
             $tenants = Tenant::all();
 
-            $schoolRoles = ['Admin', 'Kepala Sekolah', 'Wali Kelas', 'Guru', 'Siswa'];
-
             foreach ($tenants as $tenant) {
-                $slug = Str::slug($tenant->name, '-');
-                foreach ($schoolRoles as $roleName) {
+                $slugTenant = Str::slug($tenant->name, '-');
+
+                // --- Single roles (1 per tenant) ---
+                $singleRoles = ['Admin', 'Kepala Sekolah'];
+
+                foreach ($singleRoles as $roleName) {
                     $email = Str::slug($roleName, '-') . "+t{$tenant->id}@erapor.local";
 
                     $user = User::updateOrCreate(
@@ -72,8 +75,70 @@ class UserSeeder extends Seeder
                             'nip_nis'    => strtoupper(substr($roleName, 0, 2)) . '-' . str_pad((string)$tenant->id, 6, '0', STR_PAD_LEFT),
                             'birth_date' => '1995-01-01',
                             'religion'   => 'Islam',
-                            'gender'     => in_array($roleName, ['Siswa', 'Guru', 'Wali Kelas']) ? 'Perempuan' : 'Laki-laki',
+                            'gender'     => 'Laki-laki',
                             'phone'      => '081200000000',
+                            'address'    => "Sekolah {$tenant->name}",
+                        ]
+                    );
+                }
+
+                // --- 3 Wali Kelas per tenant ---
+                for ($i = 1; $i <= 3; $i++) {
+                    $email = "walikelas{$i}+t{$tenant->id}@erapor.local";
+
+                    $user = User::updateOrCreate(
+                        ['email' => $email],
+                        [
+                            'name'              => "Wali Kelas {$i} {$tenant->name}",
+                            'password'          => Hash::make('1234'),
+                            'tenant_id'         => $tenant->id,
+                            'email_verified_at' => now(),
+                        ]
+                    );
+
+                    // Wali Kelas dapat dua role: Wali Kelas + Guru
+                    $user->syncRoles(['Wali Kelas', 'Guru']);
+
+                    Profile::updateOrCreate(
+                        ['user_id' => $user->id],
+                        [
+                            'name'       => "Wali Kelas {$i} {$tenant->name}",
+                            'nip_nis'    => "WK-" . str_pad((string)$tenant->id, 4, '0', STR_PAD_LEFT) . str_pad((string)$i, 3, '0', STR_PAD_LEFT),
+                            'birth_date' => '1993-06-01',
+                            'religion'   => 'Islam',
+                            'gender'     => ($i % 2 === 0) ? 'Perempuan' : 'Laki-laki',
+                            'phone'      => '08121000000' . $i,
+                            'address'    => "Sekolah {$tenant->name}",
+                        ]
+                    );
+                }
+
+                // --- 3 Guru per tenant ---
+                for ($i = 1; $i <= 3; $i++) {
+                    $email = "guru{$i}+t{$tenant->id}@erapor.local";
+
+                    $user = User::updateOrCreate(
+                        ['email' => $email],
+                        [
+                            'name'              => "Guru {$i} {$tenant->name}",
+                            'password'          => Hash::make('1234'),
+                            'tenant_id'         => $tenant->id,
+                            'email_verified_at' => now(),
+                        ]
+                    );
+
+                    // Guru hanya role Guru
+                    $user->syncRoles(['Guru']);
+
+                    Profile::updateOrCreate(
+                        ['user_id' => $user->id],
+                        [
+                            'name'       => "Guru {$i} {$tenant->name}",
+                            'nip_nis'    => "GU-" . str_pad((string)$tenant->id, 4, '0', STR_PAD_LEFT) . str_pad((string)$i, 3, '0', STR_PAD_LEFT),
+                            'birth_date' => '1990-07-01',
+                            'religion'   => 'Islam',
+                            'gender'     => ($i % 2 === 0) ? 'Perempuan' : 'Laki-laki',
+                            'phone'      => '08130000000' . $i,
                             'address'    => "Sekolah {$tenant->name}",
                         ]
                     );

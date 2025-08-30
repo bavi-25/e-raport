@@ -8,6 +8,7 @@ use App\Http\Controllers\TenantController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\AcademicYearController;
+use App\Http\Controllers\ClassRoomController;
 
 Route::get('/redis-test', function () {
     try {
@@ -54,4 +55,5 @@ Route::middleware(['auth', 'role:Super-Admin'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('/school/academic-years', AcademicYearController::class)->names('school.academic_year');
     Route::resource('/school/grade_levels', GradeLevelController::class)->names('school.grade_levels');
+    Route::resource('/school/class_rooms', ClassRoomController::class)->names('school.class_rooms');
 });
