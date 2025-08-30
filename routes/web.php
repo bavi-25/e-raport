@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\AcademicYearController;
 
 Route::get('/redis-test', function () {
@@ -40,7 +41,7 @@ Route::get('/', function () {
 Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'authenticate'])->name('login.authenticate')->middleware('guest');
 
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
+Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
@@ -52,4 +53,5 @@ Route::middleware(['auth', 'role:Super-Admin'])->group(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('/school/academic-years', AcademicYearController::class)->names('school.academic_year');
+    Route::resource('/school/grade_levels', GradeLevelController::class)->names('school.grade_levels');
 });

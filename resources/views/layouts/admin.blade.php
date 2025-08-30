@@ -162,13 +162,9 @@
                                 <i class="fas fa-user mr-2"></i> Profile
                             </a>
                             <div class="dropdown-divider"></div>
-                            <a href="{{ route('logout') }}" class="dropdown-item"
-                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <a href="{{ route('logout') }}" class="dropdown-item">
                                 <i class="fas fa-sign-out-alt mr-2"></i> Logout
                             </a>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                                @csrf
-                            </form>
                         </div>
                     </li>
                     <li class="nav-item">
@@ -209,6 +205,7 @@
                                 </a>
                             </li>
                             <li class="nav-header">Master Data</li>
+                            @role('SuperAdmin')
                             <li class="nav-item">
                                 <a href="{{ route('super_admin.tenants.index') }}"
                                     class="nav-link {{ request()->routeIs('super_admin.tenants.*') ? 'active' : '' }}">
@@ -217,7 +214,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="./index.html" class="nav-link">
+                                <a href="/" class="nav-link">
                                     <i class="nav-icon fas fa-user-tie"></i>
                                     <p>
                                         Roles
@@ -225,16 +222,17 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="./index.html" class="nav-link">
+                                <a href="/" class="nav-link">
                                     <i class="nav-icon fas fa-users"></i>
                                     <p>
                                         Users
                                     </p>
                                 </a>
                             </li>
+                            @endrole
 
                             <li class="nav-item">
-                                <a href="./index.html" class="nav-link">
+                                <a href="/" class="nav-link">
                                     <i class="nav-icon fas fa-book-open"></i>
                                     <p>
                                         Subjects
@@ -251,17 +249,14 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="./index.html" class="nav-link">
+                                <a href="{{ route('school.grade_levels.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.grade_levels.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-layer-group"></i>
                                     <p>
                                         Grade Levels
                                     </p>
                                 </a>
                             </li>
-
-
-
-
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->
