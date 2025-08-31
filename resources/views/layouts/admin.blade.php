@@ -378,18 +378,23 @@
         <script>
             $(function () {
                 $("#example1").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-                }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+                    "responsive": true, 
+                    "lengthChange": false, 
+                    "autoWidth": false,
+                    "searching": true,
+                    "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+                }).buttons()
+                .container()
+                .appendTo('#example1_wrapper .col-md-6:eq(0)');
 
                 $('#example2').DataTable({
-                "paging": true,
-                "lengthChange": false,
-                "searching": false,
-                "ordering": true,
-                "info": true,
-                "autoWidth": false,
-                "responsive": true,
+                    "paging": true,
+                    "lengthChange": false,
+                    "searching": true,
+                    "ordering": true,
+                    "info": true,
+                    "autoWidth": false,
+                    "responsive": true,
                 });
 
                 $('.select2').select2()
@@ -400,6 +405,11 @@
           });
         </script>
         <script>
+            // Swal.fire({
+            //     title: 'Welcome!',
+            //     text: 'Selamat datang di aplikasi E-Raport.',
+            //     icon: 'success',
+            // })
             @if (session('success'))
                 const Toast = Swal.mixin({
                     toast: true,
@@ -424,6 +434,26 @@
                     title: '{{ session('error') }}'
                 })
             @endif
+        </script>
+        <script>
+            $(".form-delete").on("submit", function(e) {
+                e.preventDefault();
+                let form = this;
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "This data will be permanently deleted!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit(); 
+                    }
+                });
+            });
         </script>
 
     </body>
