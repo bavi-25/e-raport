@@ -21,7 +21,7 @@
                             <th>Name</th>
                             <th>Academic Year</th>
                             <th>Teacher</th>
-                            <th>Action</th>
+                            <th class="text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,19 +31,22 @@
                             <td>{{ $class_room->name }}</td>
                             <td>{{ $class_room->academicYear->code ?? '-' }}</td>
                             <td>{{ $class_room->homeroomTeacher->name ?? '-' }}</td>
-                            <td>
-                                <a href="{{ route('school.class_rooms.edit', $class_room->id) }}"
-                                    class="btn btn-sm btn-warning">
-                                    <i class="fas fa-edit"></i> Edit
-                                </a>
-                                <form action="{{ route('school.class_rooms.destroy', $class_room->id) }}" method="POST"
-                                    class="d-inline delete-form">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger btn-delete">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </button>
-                                </form>
+                            <td class="text-center">
+                               <div class="btn-group">
+                                <button type="button" class="btn btn-primary">Action</button>
+                                <button type="button" class="btn btn-primary dropdown-toggle dropdown-icon" data-toggle="dropdown">
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" role="menu">
+                                    <a class="dropdown-item" href="{{ route('school.class_rooms.edit', $class_room->id) }}">Edit</a>
+                                    <div class="dropdown-divider"></div>
+                                    <form class="form-delete" action="{{ route('school.class_rooms.destroy', $class_room->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="dropdown-item text-danger">Delete</button>
+                                    </form>
+                                </div>
+                            </div>
                             </td>
                         </tr>
                         @endforeach

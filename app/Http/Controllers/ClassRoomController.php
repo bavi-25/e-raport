@@ -20,7 +20,10 @@ class ClassRoomController extends Controller
     public function index()
     {
         //
-        $classRooms = Cache::remember('class_rooms:all', now()->addMinutes(10), function () {
+        $user = Auth::user();
+        $tenantKey = $user->tenant_id;
+        $ttl = now()->addHours(2);
+        $classRooms = Cache::remember("$tenantKey:class_room:main", $ttl, function () {
             return ClassRoom::with(['gradeLevel', 'homeroomTeacher', 'academicYear'])
                 ->where('tenant_id', Auth::user()->tenant_id)
                 ->orderBy('name')
@@ -56,7 +59,7 @@ class ClassRoomController extends Controller
         );
 
         $teachers = Cache::remember(
-            "$tenantKey:teachers:homeroom",
+            "$tenantKey:teachers:homeroom:main",
             $ttl,
             function () use ($tenantKey) {
                 return User::role('Wali Kelas')
@@ -119,14 +122,87 @@ class ClassRoomController extends Controller
     public function edit(string $id)
     {
         //
+        $user = Auth::user();
+        $tenantKey = $user->tenant_id;
+        $ttl = now()->addHours(2);
+        $classRooms = Cache::remember(
+            "$tenantKey:class_room:sub:$id",
+            now()->addMinutes(10),
+            function () use ($id) {
+                return ClassRoom::with(['gradeLevel', 'homeroomTeacher', 'academicYear'])
+                    ->where('id', $id)
+                    ->where('tenant_id', Auth::user()->tenant_id)
+                    ->first();
+            }
+        );
+        $grade_levels = Cache::remember(
+            "$tenantKey:grade_level:main",
+            $ttl,
+            function () use ($tenantKey) {
+                return GradeLevel::query()
+                    ->select('id', 'name', 'tenant_id')
+                    ->where('tenant_id', $tenantKey)
+                    ->orderBy('name')
+                    ->get();
+            }
+        );
+
+        $teachers = Cache::remember(
+            "$tenantKey:teachers:homeroom:main",
+            $ttl,
+            function () use ($tenantKey) {
+                return User::role('Wali Kelas')
+                    ->with(['profile:id,user_id,name'])
+                    ->where('tenant_id', $tenantKey)
+                    ->select('id', 'name', 'email', 'tenant_id')
+                    ->orderBy('name')
+                    ->get();
+            }
+        );
+        $data = [
+            'page' => 'Edit Class Room',
+            'class_room' => $classRooms,
+            'grade_levels' => $grade_levels,
+            'teachers' => $teachers,
+        ];
+        return view('school.class_room.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(ClassRoomRequest $request, string $id)
     {
         //
+        $user = Auth::user();
+        $tenantKey = $user->tenant_id;
+        $ttl = now()->addHours(2);
+        $classRooms = Cache::remember(
+            "$tenantKey:class_room:sub:$id",
+            $ttl,
+            function () use ($id) {
+                return ClassRoom::with(['gradeLevel', 'homeroomTeacher', 'academicYear'])
+                    ->where('id', $id)
+                    ->where('tenant_id', Auth::user()->tenant_id)
+                    ->first();
+            }
+        );
+        if (!$classRooms) {
+            return redirect()->back()->with('error', 'Kelas tidak ditemukan');
+        }
+        $classRooms->update([
+            'name' => $request->name,
+            'section' => $request->section,
+            'label' => $request->label,
+            'grade_level_id' => $request->grade_level_id,
+            'homeroom_teacher_id' => $request->teacher_id,
+        ]);
+        $key = "$tenantKey:class_room:main";
+        Cache::forget($key);
+        $key = "$tenantKey:class_room:sub:$id";
+        Cache::forget($key);
+        return redirect()->route('school.class_rooms.index')->with('success', 'Kelas berhasil diupdate');
+
     }
 
     /**
@@ -135,5 +211,19 @@ class ClassRoomController extends Controller
     public function destroy(string $id)
     {
         //
+        $user = Auth::user();
+        $tenantKey = $user->tenant_id;
+        $classRooms = ClassRoom::where('id', $id)
+            ->where('tenant_id', $tenantKey)
+            ->first();
+        $key = "$tenantKey:class_room:main";
+        Cache::forget($key);
+        $key = "$tenantKey:class_room:sub:$id";
+        Cache::forget($key);
+        if (!$classRooms) {
+            return redirect()->back()->with('error', 'Kelas tidak ditemukan');
+        }
+        $classRooms->delete();
+        return redirect()->route('school.class_rooms.index')->with('success', 'Kelas berhasil dihapus');
     }
 }
