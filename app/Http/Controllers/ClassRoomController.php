@@ -2,15 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Models\ClassRoom;
 use App\Models\GradeLevel;
 use App\Models\AcademicYear;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ClassRoomRequest;
-use App\Models\ClassRoom;
-use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\ClassRoomRequest;
 
 class ClassRoomController extends Controller
 {
@@ -72,9 +71,9 @@ class ClassRoomController extends Controller
         );
 
         $data = [
-            'page'         => 'Create Class Room',
+            'page' => 'Create Class Room',
             'grade_levels' => $grade_levels,
-            'teachers'     => $teachers,
+            'teachers' => $teachers,
         ];
 
         return view('school.class_room.create', $data);
@@ -94,7 +93,7 @@ class ClassRoomController extends Controller
             ->first();
 
         if (!$academic_year) {
-            return redirect()->back()->with('error', 'Tahun Pelajaran aktif tidak ditemukan. Silahkan atur Tahun Pelajaran terlebih dahulu.');
+            return redirect()->back()->with('error', 'Active academic year not found. Please set the Academic Year first.');
         }
         ClassRoom::create([
             'name' => $request->name,
@@ -105,7 +104,7 @@ class ClassRoomController extends Controller
             'academic_year_id' => $academic_year->id,
             'tenant_id' => $tenantKey,
         ]);
-        return redirect()->route('school.class_rooms.index')->with('success', 'Kelas berhasil ditambahkan');
+        return redirect()->route('school.class_rooms.index')->with('success', 'Class Room created.');
     }
 
     /**
@@ -188,7 +187,7 @@ class ClassRoomController extends Controller
             }
         );
         if (!$classRooms) {
-            return redirect()->back()->with('error', 'Kelas tidak ditemukan');
+            return redirect()->back()->with('error', 'Class Room not found');
         }
         $classRooms->update([
             'name' => $request->name,
@@ -201,7 +200,7 @@ class ClassRoomController extends Controller
         Cache::forget($key);
         $key = "$tenantKey:class_room:sub:$id";
         Cache::forget($key);
-        return redirect()->route('school.class_rooms.index')->with('success', 'Kelas berhasil diupdate');
+        return redirect()->route('school.class_rooms.index')->with('success', 'Class Room updated.');
 
     }
 
@@ -221,9 +220,9 @@ class ClassRoomController extends Controller
         $key = "$tenantKey:class_room:sub:$id";
         Cache::forget($key);
         if (!$classRooms) {
-            return redirect()->back()->with('error', 'Kelas tidak ditemukan');
+            return redirect()->back()->with('error', 'Class Room not found');
         }
         $classRooms->delete();
-        return redirect()->route('school.class_rooms.index')->with('success', 'Kelas berhasil dihapus');
+        return redirect()->route('school.class_rooms.index')->with('success', 'Class Room deleted.');
     }
 }
