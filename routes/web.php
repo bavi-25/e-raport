@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AssessmentComponentController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
@@ -58,4 +59,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/grade_levels', GradeLevelController::class)->names('school.grade_levels');
     Route::resource('/school/class_rooms', ClassRoomController::class)->names('school.class_rooms');
     Route::resource('/school/subjects', SubjectController::class)->names('school.subjects');
+    Route::resource('/school/assessment_compnents', AssessmentComponentController::class)->names('school.assessment_components');
 });
