@@ -20,9 +20,4 @@ class Subject extends Model
     {
         return $this->belongsTo(Tenant::class, 'tenant_id', 'id', 'tenants');
     }
-
-    public function gradeLevels()
-    {
-        return $this->belongsToMany(GradeLevel::class, 'grade_level_subject', 'subject_id', 'grade_level_id');
-    }
 }

@@ -239,7 +239,8 @@
                             @endrole
 
                             <li class="nav-item">
-                                <a href="/" class="nav-link">
+                                <a href="{{ route('school.subjects.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.subjects.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-book-open"></i>
                                     <p>
                                         Subjects
