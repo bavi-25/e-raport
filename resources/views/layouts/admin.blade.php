@@ -274,6 +274,24 @@
                                     </p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.assessment_components.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.assessment_components.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tasks"></i>
+                                    <p>
+                                        Assessment Components
+                                    </p>
+                                </a>
+                            </li>
+                            {{-- <li class="nav-item">
+                                <a href="{{ route('school.assessment_components.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.assessment_components.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-user-graduate"></i>
+                                    <p>
+                                        Students
+                                    </p>
+                                </a> --}}
+                            </li>
                         </ul>
                     </nav>
                     <!-- /.sidebar-menu -->
