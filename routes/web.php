@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
@@ -56,4 +57,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/academic-years', AcademicYearController::class)->names('school.academic_year');
     Route::resource('/school/grade_levels', GradeLevelController::class)->names('school.grade_levels');
     Route::resource('/school/class_rooms', ClassRoomController::class)->names('school.class_rooms');
+    Route::resource('/school/subjects', SubjectController::class)->names('school.subjects');
 });
