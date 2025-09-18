@@ -1,16 +1,19 @@
 <?php
 
-use App\Http\Controllers\AssessmentComponentController;
-use App\Http\Controllers\SubjectController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\ClassRoomController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\AcademicYearController;
-use App\Http\Controllers\ClassRoomController;
+use App\Http\Controllers\ClassSubjectController;
+use App\Http\Controllers\AssessmentComponentController;
 
 Route::get('/redis-test', function () {
     try {
@@ -60,4 +63,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/class_rooms', ClassRoomController::class)->names('school.class_rooms');
     Route::resource('/school/subjects', SubjectController::class)->names('school.subjects');
     Route::resource('/school/assessment_compnents', AssessmentComponentController::class)->names('school.assessment_components');
+    Route::resource('/school/students', StudentController::class)->names('school.students');
+    Route::resource('/school/class_subjects', ClassSubjectController::class)->names('school.class_subjects');
+    Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
 });

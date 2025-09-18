@@ -12,7 +12,7 @@ class GradeLevelRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return Auth::user()->hasRole('SuperAdmin|Wali Kelas|Guru');
+        return Auth::user()->hasRole('SuperAdmin|Kepala Sekolah|Wali Kelas|Guru');
     }
 
     /**

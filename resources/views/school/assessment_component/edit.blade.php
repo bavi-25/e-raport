@@ -19,7 +19,6 @@
 
                 <div class="card-body">
                     <div class="row">
-                        {{-- Name --}}
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Name <span class="text-danger">*</span></label>

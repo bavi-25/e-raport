@@ -143,6 +143,36 @@ class UserSeeder extends Seeder
                         ]
                     );
                 }
+
+                for ($i = 1; $i <= 10; $i++) {
+                    $no = str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+                    $email = "siswa{$no}+t{$tenant->id}@erapor.local";
+
+                    $user = User::updateOrCreate(
+                        ['email' => $email],
+                        [
+                            'name' => "Siswa {$no} {$tenant->name}",
+                            'password' => Hash::make('1234'),
+                            'tenant_id' => $tenant->id,
+                            'email_verified_at' => now(),
+                        ]
+                    );
+
+                    $user->syncRoles(['Siswa']);
+
+                    Profile::updateOrCreate(
+                        ['user_id' => $user->id],
+                        [
+                            'name' => "Siswa {$no} {$tenant->name}",
+                            'nip_nis' => "SI-" . str_pad((string) $tenant->id, 4, '0', STR_PAD_LEFT) . str_pad((string) $i, 4, '0', STR_PAD_LEFT),
+                            'birth_date' => now()->subYears(16)->startOfYear()->addDays($i)->toDateString(),
+                            'religion' => 'Islam',
+                            'gender' => ($i % 2 === 0) ? 'Perempuan' : 'Laki-laki',
+                            'phone' => '081500000' . str_pad((string) $i, 3, '0', STR_PAD_LEFT),
+                            'address' => "Domisili {$tenant->name}",
+                        ]
+                    );
+                }
             }
         });
     }
