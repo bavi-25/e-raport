@@ -1,10 +1,11 @@
 @extends('layouts.admin')
-@section('title', 'E-Raport | Create Assignment')
+@section('title', 'E-Raport | Edit Assignment')
 
 @section('content')
 <div class="row">
     <div class="col-12">
-        <form method="POST" action="{{ route('school.class_subjects.store') }}">
+        <form method="POST" action="{{ route('school.class_subjects.update', $assignment->id) }}">
+            @method('PUT')
             @csrf
             <div class="card">
                 <div class="card-header">
@@ -28,7 +29,7 @@
                                     <option value=""></option>
                                     @foreach($classes as $c)
                                     <option value="{{ $c->id }}"
-                                        {{ (string)old('class_id')===(string)$c->id ? 'selected' : '' }}>
+                                        {{ (string)old('class_id', $assignment->class_id)===(string)$c->id ? 'selected' : '' }}>
                                         {{ $c->name }}
                                     </option>
                                     @endforeach
@@ -47,7 +48,7 @@
                                     <option value=""></option>
                                     @foreach($subjects as $s)
                                     <option value="{{ $s->id }}"
-                                        {{ (string)old('subject_id')===(string)$s->id ? 'selected' : '' }}>
+                                        {{ (string)old('subject_id', $assignment->subject_id)===(string)$s->id ? 'selected' : '' }}>
                                         {{ $s->code }} — {{ $s->name }}
                                     </option>
                                     @endforeach
@@ -66,7 +67,7 @@
                                     <option value=""></option>
                                     @foreach($teachers as $t)
                                     <option value="{{ $t->id }}"
-                                        {{ (string)old('teacher_id')===(string)$t->id ? 'selected' : '' }}>
+                                        {{ (string)old('teacher_id', $assignment->teacher_id)===(string)$t->id ? 'selected' : '' }}>
                                         {{ $t->name }}
                                     </option>
                                     @endforeach

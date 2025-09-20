@@ -295,7 +295,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('school.class_subjects.index') }}"  
                                     class="nav-link {{ request()->routeIs('school.class_subjects.*') ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-user-graduate"></i>
+                                    <i class="nav-icon fas fa-book-reader"></i>
                                     <p>
                                         Class Subjects
                                     </p>
@@ -304,7 +304,7 @@
                             <li class="nav-item">
                                 <a href="{{ route('school.enrollments.index') }}"  
                                     class="nav-link {{ request()->routeIs('school.enrollments.*') ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-user-graduate"></i>
+                                    <i class="nav-icon far fa-id-badge"></i>
                                     <p>
                                         Enrollments
                                     </p>

@@ -179,7 +179,6 @@ class ClassSubjectController extends Controller
                     ->filter();
             }
         );
-
         return view('school.class_subject.edit', [
             'page' => 'Edit Assignment',
             'assignment' => $assignment,
@@ -193,17 +192,18 @@ class ClassSubjectController extends Controller
     {
         $tenantId = $this->tenantId();
 
+        $data = $request->validate([
+            'class_id' => ['required', 'integer', 'exists:classes,id'],
+            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
+            'teacher_id' => ['required', 'integer', 'exists:profiles,id'],
+        ]);
+        
         $assignment = ClassSubject::where('id', $id)
             ->whereHas('class', fn($q) => $q->where('tenant_id', $tenantId))
             ->whereHas('subject', fn($q) => $q->where('tenant_id', $tenantId))
             ->whereHas('teacher.user', fn($q) => $q->where('tenant_id', $tenantId))
             ->firstOrFail();
 
-        $data = $request->validate([
-            'class_id' => ['required', 'integer', 'exists:classes,id'],
-            'subject_id' => ['required', 'integer', 'exists:subjects,id'],
-            'teacher_id' => ['required', 'integer', 'exists:profiles,id'],
-        ]);
 
         $classOk = ClassRoom::where('tenant_id', $tenantId)->where('id', $data['class_id'])->exists();
         $subjectOk = Subject::where('tenant_id', $tenantId)->where('id', $data['subject_id'])->exists();
