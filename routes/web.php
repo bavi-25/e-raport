@@ -9,6 +9,7 @@ use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ClassRoomController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\AcademicYearController;
@@ -66,4 +67,5 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/students', StudentController::class)->names('school.students');
     Route::resource('/school/class_subjects', ClassSubjectController::class)->names('school.class_subjects');
     Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
+    Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
 });

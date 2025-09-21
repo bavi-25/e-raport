@@ -284,7 +284,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('school.students.index') }}"  
+                                <a href="{{ route('school.students.index') }}"
                                     class="nav-link {{ request()->routeIs('school.students.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-user-graduate"></i>
                                     <p>
@@ -293,7 +293,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('school.class_subjects.index') }}"  
+                                <a href="{{ route('school.class_subjects.index') }}"
                                     class="nav-link {{ request()->routeIs('school.class_subjects.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-book-reader"></i>
                                     <p>
@@ -302,11 +302,20 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('school.enrollments.index') }}"  
+                                <a href="{{ route('school.enrollments.index') }}"
                                     class="nav-link {{ request()->routeIs('school.enrollments.*') ? 'active' : '' }}">
                                     <i class="nav-icon far fa-id-badge"></i>
                                     <p>
                                         Enrollments
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.assessments.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.assessments.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-clipboard-list"></i>
+                                    <p>
+                                        Assessments
                                     </p>
                                 </a>
                             </li>
@@ -492,7 +501,7 @@
                 });
             });
         </script>
-
+        @stack('scripts')
     </body>
 
 </html>
