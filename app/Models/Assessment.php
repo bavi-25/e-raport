@@ -36,4 +36,8 @@ class Assessment extends Model
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
     }
+    public function items()
+    {
+        return $this->hasMany(AssessmentItem::class);
+    }
 }
