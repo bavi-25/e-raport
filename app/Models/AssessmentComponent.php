@@ -20,4 +20,5 @@ class AssessmentComponent extends Model
     {
         return $this->belongsTo(Tenant::class, 'tenant_id');
     }
+    
 }

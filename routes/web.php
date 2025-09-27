@@ -69,3 +69,10 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
     Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
 });
+
+
+Route::middleware(['auth', 'role:Siswa'])->group(function () {
+    Route::get('/student/enrollments', [\App\Http\Controllers\Student\EnrollmentController::class, 'index'])->name('student.enrollment.index');
+    Route::get('/student/enrollments/{id}', [\App\Http\Controllers\Student\EnrollmentController::class, 'show'])->name('student.enrollment.show');
+    Route::get('/student/enrollments/{enrollmentId}/subjects/{subjectId}', [\App\Http\Controllers\Student\EnrollmentController::class, 'subject_detail'])->name('student.enrollment.subject_detail');
+});

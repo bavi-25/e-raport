@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ClassRoom extends Model
 {
-    //
     protected $table = 'classes';
+
     protected $fillable = [
         'name',
         'section',
@@ -17,18 +17,30 @@ class ClassRoom extends Model
         'tenant_id',
         'homeroom_teacher_id'
     ];
+
     public function tenant()
     {
-        return $this->belongsTo(Tenant::class, 'tenant_id', 'id', 'tenants');
+        return $this->belongsTo(Tenant::class, 'tenant_id');
     }
+
     public function academicYear()
     {
-        return $this->belongsTo(AcademicYear::class, 'academic_year_id', 'id', 'academic_year');
+        return $this->belongsTo(AcademicYear::class, 'academic_year_id');
     }
-    public function gradeLevel(){
-        return $this->belongsTo(GradeLevel::class, 'grade_level_id', 'id', 'grade_levels');
+
+    public function gradeLevel()
+    {
+        return $this->belongsTo(GradeLevel::class, 'grade_level_id');
     }
-    public function homeroomTeacher(){
-        return $this->belongsTo(Profile::class, 'homeroom_teacher_id', 'id', 'profiles');
-    }   
+
+    public function homeroomTeacher()
+    {
+        return $this->belongsTo(Profile::class, 'homeroom_teacher_id');
+    }
+
+    public function classSubjects()
+    {
+        return $this->hasMany(ClassSubject::class, 'class_id', 'id');
+    }
 }
+

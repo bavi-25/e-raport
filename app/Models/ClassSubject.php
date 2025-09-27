@@ -27,4 +27,13 @@ class ClassSubject extends Model
     {
         return $this->belongsTo(Profile::class, 'teacher_id');
     }
+
+    public function assessments()
+    {
+        return $this->hasMany(\App\Models\Assessment::class, 'class_subject_id');
+    }
+    public function finalGrades()
+    {
+        return $this->hasMany(\App\Models\FinalGrade::class, 'class_subject_id');
+    }
 }
