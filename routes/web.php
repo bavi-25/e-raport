@@ -12,6 +12,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GradeLevelController;
+use App\Http\Controllers\GradeEntryController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\AssessmentComponentController;
@@ -68,6 +69,11 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/class_subjects', ClassSubjectController::class)->names('school.class_subjects');
     Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
     Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
+});
+
+Route::middleware(['auth', 'role:Guru|Wali Kelas'])->group(function () {
+    Route::get('/school/grade-entries', [GradeEntryController::class, 'index'])->name('school.grade_entries.index');
+    Route::post('/school/grade-entries', [GradeEntryController::class, 'store'])->name('school.grade_entries.store');
 });
 
 

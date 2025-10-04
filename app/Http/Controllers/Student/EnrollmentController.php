@@ -47,10 +47,12 @@ class EnrollmentController extends Controller
 
     public function subject_detail($enrollmentId, $subjectId)
     {
-        // 1) Pastikan enrollment milik student & tenant saat ini
+        $tenantId = $this->tenantId();
+        $studentId = $this->studentId();
+
         $enrollment = Enrollment::query()
-            ->where('tenant_id', $this->tenantId())
-            ->where('student_id', $this->studentId())
+            ->where('tenant_id', $tenantId)
+            ->where('student_id', $studentId)
             ->with([
                 'student:id,name',
                 'academicYear:id,code,term,status',
@@ -59,46 +61,48 @@ class EnrollmentController extends Controller
             ->findOrFail($enrollmentId);
 
         $classId = optional($enrollment->class)->id;
-        if (!$classId)
+        if (!$classId) {
             abort(404, 'Kelas untuk enrollment ini tidak ditemukan.');
+        }
 
-        // 2) Ambil ClassSubject + SEMUA assessments untuk enrollment ini
         $classSubject = \App\Models\ClassSubject::query()
-            ->where('tenant_id', $this->tenantId())
+            ->where('tenant_id', $tenantId)
             ->where('class_id', $classId)
             ->where('subject_id', $subjectId)
             ->with([
                 'subject:id,code,name',
                 'teacher:id,name',
 
-                // Ambil semua assessment untuk enrollment terkait
-                'assessments' => function ($q) use ($enrollmentId) {
+                'assessments' => function ($q) use ($enrollmentId, $tenantId) {
                     $q->select('id', 'class_subject_id', 'enrollment_id', 'title', 'date', 'tenant_id')
+                        ->where('tenant_id', $tenantId)
                         ->where('enrollment_id', $enrollmentId)
                         ->orderByDesc('date')->orderByDesc('id');
                 },
 
-                // Ambil items-nya (tanpa kolom component_id)
-                'assessments.items' => function ($q) {
-                    $q->select('id', 'assessment_id', 'max_score');
+                'assessments.items' => function ($q) use ($tenantId) {
+                    $q->select('id', 'assessment_id', 'max_score', 'tenant_id')
+                        ->where('tenant_id', $tenantId)
+                        ->orderBy('id');
                 },
 
-                // Ambil nilai siswa pada tiap item (filtered by current student)
-                'assessments.items.gradeEntries' => function ($q) {
-                    $q->select('id', 'assessment_item_id', 'student_id', 'final_score')
-                        ->where('student_id', $this->studentId());
+                'assessments.items.gradeEntries' => function ($q) use ($tenantId, $studentId) {
+                    $q->select('id', 'assessment_item_id', 'student_id', 'final_score', 'tenant_id')
+                        ->where('tenant_id', $tenantId)
+                        ->where('student_id', $studentId);
                 },
 
-                // opsional: final grade per mapel
-                'finalGrades' => function ($q) {
-                    $q->select('id', 'class_subject_id', 'student_id', 'final_score')
-                        ->where('student_id', $this->studentId());
+                'finalGrades' => function ($q) use ($tenantId, $studentId) {
+                    $q->select('id', 'class_subject_id', 'student_id', 'final_score', 'tenant_id')
+                        ->where('tenant_id', $tenantId)
+                        ->where('student_id', $studentId);
                 },
             ])
             ->first();
 
-        if (!$classSubject)
+        if (!$classSubject) {
             abort(404, 'Subject tidak ditemukan pada kelas dari enrollment ini.');
+        }
 
         $assessmentSummaries = [];
         foreach ($classSubject->assessments as $ass) {
@@ -110,9 +114,10 @@ class EnrollmentController extends Controller
             foreach ($ass->items as $item) {
                 $maxSum += (float) ($item->max_score ?? 0);
                 $entry = $item->gradeEntries->first();
+
                 if ($entry) {
                     $scoredItems++;
-                    $scoreSum += (float) $entry->score;
+                    $scoreSum += (float) ($entry->final_score ?? 0);
                 }
             }
 
@@ -129,21 +134,16 @@ class EnrollmentController extends Controller
                 'percent' => $percent,
             ];
         }
-        // return dd([
-        //     'page' => 'Subject Detail',
-        //     'enrollment' => $enrollment,
-        //     'classSubject' => $classSubject,
-        //     'assessments' => $classSubject->assessments,
-        //     'assessmentSummaries' => $assessmentSummaries,
-        // ]);
+
         return view('student.enrollment.subject_detail', [
             'page' => 'Subject Detail',
             'enrollment' => $enrollment,
             'classSubject' => $classSubject,
-            'assessments' => $classSubject->assessments, // kalau masih mau dipakai
-            'assessmentSummaries' => $assessmentSummaries,        // ini yang dipakai untuk tampil nilai per assessment
+            'assessments' => $classSubject->assessments,
+            'assessmentSummaries' => $assessmentSummaries,
         ]);
     }
+
 
     private function tenantId(): string
     {

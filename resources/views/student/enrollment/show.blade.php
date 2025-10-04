@@ -47,7 +47,7 @@
                             <dt>Academic Year</dt>
                             <dd class="mb-2">
                                 @if($ay)
-                                {{ $ay->code }} — <small class="text-muted">{{ $ay->term }}</small>
+                                {{ $ay->code }}
                                 @if($ay->status === 'Active')
                                 <span class="badge badge-success ml-1">Active</span>
                                 @endif
@@ -58,9 +58,6 @@
 
                             <dt>Enrolled At</dt>
                             <dd class="mb-2">{{ optional($en->created_at)->format('d M Y') ?? '—' }}</dd>
-
-                            <dt>Total Subjects</dt>
-                            <dd class="mb-0">{{ $classSubjects->count() }}</dd>
                         </dl>
                     </div>
                 </div>
