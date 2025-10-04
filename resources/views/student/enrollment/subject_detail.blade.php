@@ -3,11 +3,16 @@
 
 @section('content')
 <div class="row">
-    <div class="col-12 d-flex align-items-center mb-3">
-        <a href="{{ route('student.enrollment.show', $enrollment->id) }}" class="btn btn-default btn-sm mr-2">
-            <i class="fas fa-arrow-left"></i> Back
-        </a>
-        <h3 class="mb-0">Subject Detail</h3>
+    <div class="col-12">
+       <div class="card">
+        <div class="card-header">
+            <div class="card-tools">
+                <a href="{{ route('student.enrollment.show', $enrollment->id) }}" class="btn btn-danger btn-sm mr-2">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+       </div>
     </div>
 
     <div class="col-lg-4">

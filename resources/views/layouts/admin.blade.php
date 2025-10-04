@@ -46,8 +46,7 @@
 
             <!-- Preloader -->
             <div class="preloader flex-column justify-content-center align-items-center">
-                <img class="animation__shake" src="/assets/img/AdminLTELogo.png" alt="AdminLTELogo" height="60"
-                    width="60">
+                <img class="animation__shake" src="/assets/img/preloader.png" alt="preloader" height="300" width="300">
             </div>
 
             <!-- Navbar -->
@@ -186,9 +185,9 @@
             <!-- Main Sidebar Container -->
             <aside class="main-sidebar sidebar-dark-primary elevation-4">
                 <!-- Brand Logo -->
-                <a href="index3.html" class="brand-link">
-                    <img src="/assets/img/AdminLTELogo.png" alt="AdminLTE Logo"
-                        class="brand-image img-circle elevation-3" style="opacity: .8">
+                <a href="/" class="brand-link">
+                    <img src="/assets/img/logo.png" alt="E-Raport Logo" class="brand-image img-circle elevation-3"
+                        style="opacity: .8">
                     <span class="brand-text font-weight-light">E-Raport</span>
                 </a>
 
@@ -213,124 +212,135 @@
                             </li>
                             <li class="nav-header">Master Data</li>
                             @role('SuperAdmin')
-                                <li class="nav-item">
-                                    <a href="{{ route('super_admin.tenants.index') }}"
-                                        class="nav-link {{ request()->routeIs('super_admin.tenants.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-school"></i>
-                                        <p>Tenant</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/" class="nav-link">
-                                        <i class="nav-icon fas fa-user-tie"></i>
-                                        <p>
-                                            Roles
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="/" class="nav-link">
-                                        <i class="nav-icon fas fa-users"></i>
-                                        <p>
-                                            Users
-                                        </p>
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a href="{{ route('super_admin.tenants.index') }}"
+                                    class="nav-link {{ request()->routeIs('super_admin.tenants.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-school"></i>
+                                    <p>Tenant</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/" class="nav-link">
+                                    <i class="nav-icon fas fa-user-tie"></i>
+                                    <p>
+                                        Roles
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="/" class="nav-link">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <p>
+                                        Users
+                                    </p>
+                                </a>
+                            </li>
                             @endrole
-                            @role('Guru|Wali Kelas|Kepala Sekolah|Admin')
-                                <li class="nav-item">
-                                    <a href="{{ route('school.subjects.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.subjects.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-book-open"></i>
-                                        <p>
-                                            Subjects
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.academic_year.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.academic_year.*') ? 'active' : '' }}">
-                                        <i class="nav-icon far fa-calendar"></i>
-                                        <p>
-                                            Academic Years
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.grade_levels.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.grade_levels.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-layer-group"></i>
-                                        <p>
-                                            Grade Levels
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.class_rooms.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.class_rooms.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-list-ol"></i>
-                                        <p>
-                                            Class Rooms
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.assessment_components.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.assessment_components.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-tasks"></i>
-                                        <p>
-                                            Assessment Components
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.students.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.students.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-user-graduate"></i>
-                                        <p>
-                                            Students
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.class_subjects.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.class_subjects.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-book-reader"></i>
-                                        <p>
-                                            Class Subjects
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.enrollments.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.enrollments.*') ? 'active' : '' }}">
-                                        <i class="nav-icon far fa-id-badge"></i>
-                                        <p>
-                                            Enrollments
-                                        </p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('school.assessments.index') }}"
-                                        class="nav-link {{ request()->routeIs('school.assessments.*') ? 'active' : '' }}">
-                                        <i class="nav-icon fas fa-clipboard-list"></i>
-                                        <p>
-                                            Assessments
-                                        </p>
-                                    </a>
-                                </li>
+                            @role('Kepala Sekolah|Admin')
+                            <li class="nav-item">
+                                <a href="{{ route('school.subjects.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.subjects.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-book-open"></i>
+                                    <p>
+                                        Subjects
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.academic_year.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.academic_year.*') ? 'active' : '' }}">
+                                    <i class="nav-icon far fa-calendar"></i>
+                                    <p>
+                                        Academic Years
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.grade_levels.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.grade_levels.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-layer-group"></i>
+                                    <p>
+                                        Grade Levels
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.class_rooms.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.class_rooms.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-list-ol"></i>
+                                    <p>
+                                        Class Rooms
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.assessment_components.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.assessment_components.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-tasks"></i>
+                                    <p>
+                                        Assessment Components
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.students.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.students.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-user-graduate"></i>
+                                    <p>
+                                        Students
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.class_subjects.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.class_subjects.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-book-reader"></i>
+                                    <p>
+                                        Class Subjects
+                                    </p>
+                                </a>
+                            </li>
+                            @endrole
+                            @role('Guru|Wali Kelas|')
+                            <li class="nav-item">
+                                <a href="{{ route('school.enrollments.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.enrollments.*') ? 'active' : '' }}">
+                                    <i class="nav-icon far fa-id-badge"></i>
+                                    <p>
+                                        Enrollments
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.assessments.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.assessments.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-clipboard-list"></i>
+                                    <p>
+                                        Assessments
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('school.grade_entries.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.grade_entries.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-clipboard-list"></i>
+                                    <p>
+                                        Grade Entries
+                                    </p>
+                                </a>
+                            </li>
                             @endrole
 
                             @role('Siswa')
-                                <li class="nav-item">
-                                    <a href="{{ route('student.enrollment.index') }}"
-                                        class="nav-link {{ request()->routeIs('student.enrollment.*') ? 'active' : '' }}">
-                                        <i class="nav-icon far fa-id-badge"></i>
-                                        <p>
-                                            Enrollments
-                                        </p>
-                                    </a>
-                                </li>
+                            <li class="nav-item">
+                                <a href="{{ route('student.enrollment.index') }}"
+                                    class="nav-link {{ request()->routeIs('student.enrollment.*') ? 'active' : '' }}">
+                                    <i class="nav-icon far fa-id-badge"></i>
+                                    <p>
+                                        Enrollments
+                                    </p>
+                                </a>
+                            </li>
                             @endrole
                         </ul>
                     </nav>

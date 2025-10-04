@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Assessment extends Model
 {
-    //
     protected $table = 'assessments';
     protected $fillable = [
         'title',
