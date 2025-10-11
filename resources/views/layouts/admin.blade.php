@@ -38,6 +38,7 @@
         <link rel="stylesheet" href="/assets/plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css">
         <!-- Toastr -->
         <link rel="stylesheet" href="/assets/plugins/toastr/toastr.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
 
     </head>
 
@@ -323,9 +324,18 @@
                             <li class="nav-item">
                                 <a href="{{ route('school.grade_entries.index') }}"
                                     class="nav-link {{ request()->routeIs('school.grade_entries.*') ? 'active' : '' }}">
-                                    <i class="nav-icon fas fa-clipboard-list"></i>
+                                    <i class="nav-icon bi bi-calculator-fill"></i>
                                     <p>
                                         Grade Entries
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href=""
+                                    class="nav-link disabled">
+                                    <i class="nav-icon bi bi-journal-medical"></i>
+                                    <p>
+                                        Reports
                                     </p>
                                 </a>
                             </li>
