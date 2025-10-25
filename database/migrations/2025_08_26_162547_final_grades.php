@@ -31,6 +31,7 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
             $table->timestamps();
+            $table->unique(['class_subject_id', 'student_id', 'tenant_id'], 'uq_final_grades_tenant_student_subject');
         });
     }
 
@@ -41,5 +42,8 @@ return new class extends Migration
     {
         //
         Schema::dropIfExists('final_grades');
+        Schema::table('final_grades', function (Blueprint $table) {
+            $table->dropUnique('uq_final_grades_tenant_student_subject');
+        });
     }
 };

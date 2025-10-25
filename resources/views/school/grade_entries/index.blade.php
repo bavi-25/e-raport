@@ -6,77 +6,95 @@
     <div class="col-12">
 
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Input Nilai Siswa</h3>
-            </div>
             <div class="card-body">
-                
-                <form method="GET" action="{{ route('school.grade_entries.index') }}" class="form-inline mb-3">
-                    <div class="form-group mr-2">
-                        <label class="mr-2">Tahun Ajaran</label>
-                        <select name="academic_year_id" class="form-control select2bs4" onchange="this.form.submit()">
-                            <option value="">- Pilih -</option>
-                            @foreach($academicYears as $ay)
-                            <option value="{{ $ay->id }}" {{ $academic_year_id == $ay->id ? 'selected' : '' }}>
-                                {{ $ay->code }} {{ $ay->status}}
-                            </option>
-                            @endforeach
-                        </select>
+                <form method="GET" action="{{ route('school.grade_entries.index') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tahun Ajaran</label>
+                                <select name="academic_year_id" class="form-control select2bs4"
+                                    onchange="this.form.submit()">
+                                    <option value="">- Pilih -</option>
+                                    @foreach ($academicYears as $ay)
+                                    <option value="{{ $ay->id }}" {{ $academic_year_id == $ay->id ? 'selected' : '' }}>
+                                        {{ $ay->code }} {{ ($ay->status == 'Active') ? ' -- Active --' : '' }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="class_id">Kelas</label>
+                                <select name="class_id" class="form-control select2bs4" onchange="this.form.submit()"
+                                    {{ empty($academic_year_id) ? 'disabled' : '' }}>
+                                    <option value="">- Pilih -</option>
+                                    @foreach ($classes as $c)
+                                    <option value="{{ $c->id }}" {{ $class_id == $c->id ? 'selected' : '' }}>
+                                        {{ $c->name }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mapel</label>
+                                <select name="class_subject_id" class="form-control select2bs4"
+                                    onchange="this.form.submit()" {{ empty($class_id) ? 'disabled' : '' }}>
+                                    <option value="">- Pilih -</option>
+                                    @foreach ($classSubjects as $cs)
+                                    <option value="{{ $cs->id }}" {{ $class_subject_id == $cs->id ? 'selected' : '' }}>
+                                        {{ $cs->subject->code ?? 'SUB' }} — {{ $cs->subject->name ?? 'Subject' }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Siswa</label>
+                                <select name="enrollment_id" class="form-control select2bs4"
+                                    onchange="this.form.submit()" {{ empty($class_subject_id) ? 'disabled' : '' }}>
+                                    <option value="">- Pilih -</option>
+                                    @foreach ($enrollments as $e)
+                                    <option value="{{ $e->id }}" {{ $enrollment_id == $e->id ? 'selected' : '' }}>
+                                        {{ $e->student->name ?? 'Student' }}
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group mx-2">
-                        <label class="mr-2">Kelas</label>
-                        <select name="class_id" class="form-control select2bs4" onchange="this.form.submit()"
-                            {{ empty($academic_year_id) ? 'disabled' : '' }}>
-                            <option value="">- Pilih -</option>
-                            @foreach($classes as $c)
-                            <option value="{{ $c->id }}" {{ $class_id == $c->id ? 'selected' : '' }}>
-                                {{ $c->name }}
-                            </option>
-                            @endforeach
-                        </select>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Assessment</label>
+                                <select name="assessment_id" class="form-control select2bs4"
+                                    onchange="this.form.submit()" {{ empty($enrollment_id) ? 'disabled' : '' }}>
+                                    <option value="">- Pilih / Buat Baru -</option>
+                                    @foreach ($assessments as $a)
+                                    <option value="{{ $a->id }}" {{ $assessment_id == $a->id ? 'selected' : '' }}>
+                                        {{ $a->date }} — {{ $a->title }}
+                                        ({{ $a->assessmentComponent->name ?? 'Comp' }})
+                                    </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group mx-2">
-                        <label class="mr-2">Mapel</label>
-                        <select name="class_subject_id" class="form-control select2bs4" onchange="this.form.submit()"
-                            {{ empty($class_id) ? 'disabled' : '' }}>
-                            <option value="">- Pilih -</option>
-                            @foreach($classSubjects as $cs)
-                            <option value="{{ $cs->id }}" {{ $class_subject_id == $cs->id ? 'selected' : '' }}>
-                                {{ $cs->subject->code ?? 'SUB' }} — {{ $cs->subject->name ?? 'Subject' }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group mx-2">
-                        <label class="mr-2">Siswa</label>
-                        <select name="enrollment_id" class="form-control select2bs4" onchange="this.form.submit()"
-                            {{ empty($class_subject_id) ? 'disabled' : '' }}>
-                            <option value="">- Pilih -</option>
-                            @foreach($enrollments as $e)
-                            <option value="{{ $e->id }}" {{ $enrollment_id == $e->id ? 'selected' : '' }}>
-                                {{ $e->student->name ?? 'Student' }}
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="form-group mx-2">
-                        <label class="mr-2">Assessment</label>
-                        <select name="assessment_id" class="form-control select2bs4" onchange="this.form.submit()"
-                            {{ empty($enrollment_id) ? 'disabled' : '' }}>
-                            <option value="">- Pilih / Buat Baru -</option>
-                            @foreach($assessments as $a)
-                            <option value="{{ $a->id }}" {{ $assessment_id == $a->id ? 'selected' : '' }}>
-                                {{ $a->date }} — {{ $a->title }} ({{ $a->assessmentComponent->name ?? 'Comp' }})
-                            </option>
-                            @endforeach
-                        </select>
-                    </div>
                 </form>
+            </div>
+        </div>
 
+        <div class="card">
+            <div class="card-body">
                 @if($enrollment_id && $class_subject_id)
                 <form method="POST" action="{{ route('school.grade_entries.store') }}">
                     @csrf
