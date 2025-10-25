@@ -331,9 +331,9 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href=""
-                                    class="nav-link disabled">
-                                    <i class="nav-icon bi bi-journal-medical"></i>
+                                <a href="{{ route('school.report.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.report.*') ? 'active' : '' }}"">
+                                    <i class=" nav-icon bi bi-journal-medical"></i>
                                     <p>
                                         Reports
                                     </p>

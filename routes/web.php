@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/report', [ReportController::class, 'index'])->name('report.index');
+
 Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'authenticate'])->name('login.authenticate')->middleware('guest');
 
@@ -70,10 +73,13 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
     Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
 });
+Route::post('/school/report/calculate-final-grades', [ReportController::class, 'calculateFinalGrades'])
+    ->name('school.report.calculateFinalGrades');
 
 Route::middleware(['auth', 'role:Guru|Wali Kelas'])->group(function () {
     Route::get('/school/grade-entries', [GradeEntryController::class, 'index'])->name('school.grade_entries.index');
     Route::post('/school/grade-entries', [GradeEntryController::class, 'store'])->name('school.grade_entries.store');
+    Route::get('/school/report', [ReportController::class, 'index'])->name('school.report.index');
 });
 
 

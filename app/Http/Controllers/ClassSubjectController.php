@@ -15,10 +15,6 @@ use Illuminate\Validation\Rule;
 
 class ClassSubjectController extends Controller
 {
-
-
-
-    /* ========= Index ========= */
     public function index()
     {
         $tenantId = $this->tenantId();
@@ -30,7 +26,6 @@ class ClassSubjectController extends Controller
                 'teacher:id,name,user_id',
                 'teacher.user:id,tenant_id,email'
             ])
-                // tenant scoping via relasi
                 ->whereHas('class', fn($q) => $q->where('tenant_id', $tenantId))
                 ->whereHas('subject', fn($q) => $q->where('tenant_id', $tenantId))
                 ->whereHas('teacher.user', fn($q) => $q->where('tenant_id', $tenantId))
@@ -44,7 +39,6 @@ class ClassSubjectController extends Controller
         ]);
     }
 
-    /* ========= Create ========= */
     public function create()
     {
         $tenantId = $this->tenantId();
@@ -197,7 +191,7 @@ class ClassSubjectController extends Controller
             'subject_id' => ['required', 'integer', 'exists:subjects,id'],
             'teacher_id' => ['required', 'integer', 'exists:profiles,id'],
         ]);
-        
+
         $assignment = ClassSubject::where('id', $id)
             ->whereHas('class', fn($q) => $q->where('tenant_id', $tenantId))
             ->whereHas('subject', fn($q) => $q->where('tenant_id', $tenantId))
