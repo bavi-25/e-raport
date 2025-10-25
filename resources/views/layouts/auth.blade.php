@@ -15,14 +15,16 @@
         <link rel="stylesheet" href="/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
         <!-- Theme style -->
         <link rel="stylesheet" href="/assets/css/adminlte.min.css">
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/assets/css/custom/auth.css">
+
+     
     </head>
 
     <body class="hold-transition login-page">
         <div class="login-box">
             @yield('content')
-            <!-- /.card -->
         </div>
-        <!-- /.login-box -->
 
         <!-- jQuery -->
         <script src="/assets/plugins/jquery/jquery.min.js"></script>
@@ -30,6 +32,23 @@
         <script src="/assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
         <!-- AdminLTE App -->
         <script src="/assets/js/adminlte.min.js"></script>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('.form-control');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.parentElement.style.transform = 'scale(1.02)';
+                    this.parentElement.style.transition = 'transform 0.3s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.parentElement.style.transform = 'scale(1)';
+                });
+            });
+        });
+        </script>
     </body>
 
 </html>

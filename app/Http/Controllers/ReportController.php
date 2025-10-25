@@ -133,14 +133,14 @@ class ReportController extends Controller
         //     ORDER BY student_id
         // ";
         $sql = "
-            SELECT
+           SELECT
             t.student_id,
-            ROUND(SUM(t.avg_score * t.weight) / NULLIF(SUM(t.weight), 0), 2) AS final_score
+            ROUND(SUM(t.avg_score * t.weight) / 100.0, 2) AS final_score
             FROM (
             SELECT
                 ge.student_id,
                 ac.id AS component_id,
-                AVG(ge.final_score) AS avg_score,
+                SUM(ge.final_score) AS avg_score,
                 ac.weight
             FROM enrollments e
             JOIN grade_entries ge
@@ -162,7 +162,7 @@ class ReportController extends Controller
             GROUP BY ge.student_id, ac.id, ac.weight
             ) AS t
             GROUP BY t.student_id
-            ORDER BY t.student_id
+            ORDER BY t.student_id;
         ";
 
 
