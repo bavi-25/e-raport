@@ -53,6 +53,9 @@
                     </div>
 
                     <div class="card-footer text-right">
+                        <a href="{{ route('raport.download', $en->id) }}" class="btn btn-sm btn-danger">
+                            <i class="bi bi-journal-text"></i> Report
+                        </a>
                         <a href="{{ route('student.enrollment.show', $en->id) }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-eye"></i> Detail
                         </a>

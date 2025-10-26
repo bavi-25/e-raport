@@ -165,7 +165,7 @@
                             <i class="far fa-user"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a href="#" class="dropdown-item">
+                            <a href="{{ route('profile.index') }}" class="dropdown-item">
                                 <i class="fas fa-user mr-2"></i> Profile
                             </a>
                             <div class="dropdown-divider"></div>
