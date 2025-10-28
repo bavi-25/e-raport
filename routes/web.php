@@ -1,19 +1,20 @@
 <?php
 
-use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ClassRoomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AssessmentController;
 use App\Http\Controllers\EnrollmentController;
-use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\GradeEntryController;
+use App\Http\Controllers\GradeLevelController;
 use App\Http\Controllers\AcademicYearController;
 use App\Http\Controllers\ClassSubjectController;
 use App\Http\Controllers\AssessmentComponentController;
@@ -56,7 +57,10 @@ Route::get('/logout', [AuthController::class, 'logout'])->name('logout')->middle
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
 
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
+});
 //SUPER ADMIN
 Route::middleware(['auth', 'role:Super-Admin'])->group(function () {
     Route::resource('/super-admin/tenants', TenantController::class)->names('super_admin.tenants');
@@ -78,7 +82,7 @@ Route::post('/school/report/calculate-final-grades', [ReportController::class, '
 
 Route::middleware(['auth', 'role:Guru|Wali Kelas'])->group(function () {
     Route::get('/school/grade-entries', [GradeEntryController::class, 'index'])->name('school.grade_entries.index');
-    Route::post('/school/grade-entries', [GradeEntryController::class, 'store'])->name('school.grade_entries.store');
+    Route::post('/school/grade-entries', action: [GradeEntryController::class, 'store'])->name('school.grade_entries.store');
     Route::get('/school/report', [ReportController::class, 'index'])->name('school.report.index');
 });
 
@@ -88,3 +92,5 @@ Route::middleware(['auth', 'role:Siswa'])->group(function () {
     Route::get('/student/enrollments/{id}', [\App\Http\Controllers\Student\EnrollmentController::class, 'show'])->name('student.enrollment.show');
     Route::get('/student/enrollments/{enrollmentId}/subjects/{subjectId}', [\App\Http\Controllers\Student\EnrollmentController::class, 'subject_detail'])->name('student.enrollment.subject_detail');
 });
+
+Route::get('/raport/download/{siswaId}', [\App\Http\Controllers\Student\EnrollmentController::class, 'generateRaport'])->name('raport.download');
