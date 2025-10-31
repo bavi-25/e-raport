@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Student;
 
 use App\Models\Enrollment;
 use App\Models\ClassSubject;
+use App\Models\Tenant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use View;
 
 class EnrollmentController extends Controller
 {
@@ -145,49 +147,80 @@ class EnrollmentController extends Controller
             'assessmentSummaries' => $assessmentSummaries,
         ]);
     }
-    public function generateRaport($siswaId)
+    public function generateRaport($enrollmentId)
     {
-        $data = [
-            'sekolah' => [
-                'nama' => 'SMA NEGERI 1 BALIKPAPAN',
-                'alamat' => 'Jl. Jenderal Sudirman No. 123, Balikpapan Kota',
-                'telepon' => '0542-123456',
-                'email' => 'info@sman1-bpp.sch.id'
-            ],
-            'siswa' => (object) [
-                'nama' => 'Ahmad Rizki Pratama',
-                'nis' => '202401',
-                'nisn' => '0123456789'
-            ],
-            'kelas' => (object) ['nama' => 'X IPA 1'],
-            'semester' => 'Ganjil',
-            'tahun_ajaran' => '2024/2025',
-            'nilai' => [
-                ['mata_pelajaran' => 'Pendidikan Agama dan Budi Pekerti', 'kkm' => 75, 'pengetahuan' => 85, 'keterampilan' => 88, 'nilai_akhir' => 86, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Pendidikan Pancasila dan Kewarganegaraan', 'kkm' => 75, 'pengetahuan' => 82, 'keterampilan' => 85, 'nilai_akhir' => 83, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Bahasa Indonesia', 'kkm' => 75, 'pengetahuan' => 88, 'keterampilan' => 90, 'nilai_akhir' => 89, 'predikat' => 'A'],
-                ['mata_pelajaran' => 'Matematika', 'kkm' => 75, 'pengetahuan' => 78, 'keterampilan' => 80, 'nilai_akhir' => 79, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Sejarah Indonesia', 'kkm' => 75, 'pengetahuan' => 84, 'keterampilan' => 86, 'nilai_akhir' => 85, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Bahasa Inggris', 'kkm' => 75, 'pengetahuan' => 87, 'keterampilan' => 89, 'nilai_akhir' => 88, 'predikat' => 'A'],
-                ['mata_pelajaran' => 'Seni Budaya', 'kkm' => 75, 'pengetahuan' => 90, 'keterampilan' => 92, 'nilai_akhir' => 91, 'predikat' => 'A'],
-                ['mata_pelajaran' => 'Pendidikan Jasmani, Olahraga dan Kesehatan', 'kkm' => 75, 'pengetahuan' => 85, 'keterampilan' => 88, 'nilai_akhir' => 86, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Fisika', 'kkm' => 75, 'pengetahuan' => 80, 'keterampilan' => 82, 'nilai_akhir' => 81, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Kimia', 'kkm' => 75, 'pengetahuan' => 83, 'keterampilan' => 85, 'nilai_akhir' => 84, 'predikat' => 'B'],
-                ['mata_pelajaran' => 'Biologi', 'kkm' => 75, 'pengetahuan' => 86, 'keterampilan' => 88, 'nilai_akhir' => 87, 'predikat' => 'B'],
-            ],
-            'rata_rata' => 85,
-            'predikat_rata' => 'B',
-            'kehadiran' => (object) ['sakit' => 2, 'izin' => 1, 'alpha' => 0],
-            'catatan' => 'Ahmad menunjukkan perkembangan yang sangat baik dalam proses pembelajaran. Siswa aktif dalam kegiatan kelas dan memiliki motivasi belajar yang tinggi. Pertahankan prestasi dan tingkatkan kemampuan dalam mata pelajaran Matematika.',
-            'wali_kelas' => (object) ['nama' => 'Dra. Siti Aminah, M.Pd', 'nip' => '196705051990032001'],
-            'kota' => 'Balikpapan',
-            'tanggal' => now()->translatedFormat('d F Y'),
+        $enrollment = Enrollment::query()
+            ->where('tenant_id', $this->tenantId())
+            ->where('student_id', $this->studentId())
+            ->with([
+                'student',
+                'academicYear:id,code,term,status',
+                'class:id,name,academic_year_id,tenant_id,homeroom_teacher_id',
+                'class.homeroomTeacher:id,name',
+                'class.classSubjects:id,class_id,subject_id,teacher_id',
+                'class.classSubjects.subject:id,code,name',
+                'class.classSubjects.teacher:id,name',
+                'class.classSubjects.finalGrades' => function ($q) use ($enrollmentId) {
+                    $q->where('student_id', function ($sub) use ($enrollmentId) {
+                        $sub->select('student_id')
+                            ->from('enrollments')
+                            ->where('id', $enrollmentId);
+                    });
+                },
+            ])
+            ->findOrFail($enrollmentId);
+
+        $siswa = $enrollment->student;
+        $kelas = (object) ['nama' => $enrollment->class->name ?? '-'];
+        $semester = $enrollment->academicYear->term ?? '-';
+        $tahunAjaran = $enrollment->academicYear->code ?? '-';
+        $waliKelas = (object) [
+            'nama' => $enrollment->class->homeroomTeacher->name ?? null,
+            'nip' => null,
         ];
 
-        $pdf = Pdf::loadView('student.report.index', $data)
-            ->setPaper('a4', 'portrait');
-        // return $pdf->download('raport-'.$siswaId.'.pdf');
-        return $pdf->stream('raport-' . $siswaId . '.pdf'); // preview di browser
+        $nilai = [];
+        foreach ($enrollment->class->classSubjects as $cs) {
+            $fg = $cs->finalGrades->first();
+            $final = $fg->final_score ?? null;
+
+            $nilai[] = [
+                'mata_pelajaran' => $cs->subject->name ?? '(Tidak diketahui)',
+                'nilai_akhir' => $final !== null ? number_format((float) $final, 2) : '-',
+            ];
+        }
+
+        $angka = [];
+        foreach ($nilai as $n) {
+            $v = is_string($n['nilai_akhir']) ? str_replace(',', '.', $n['nilai_akhir']) : $n['nilai_akhir'];
+            if (is_numeric($v))
+                $angka[] = (float) $v;
+        }
+        $rataRata = count($angka) ? number_format(array_sum($angka) / count($angka), 2) : '-';
+
+        $sekolah = Tenant::where('id', $this->tenantId())->first();
+
+        $kehadiran = (object) ['sakit' => 0, 'izin' => 0, 'alpha' => 0];
+        $catatan = null;
+        $kota = 'Kota';
+        $tanggal = now()->format('d F Y');
+
+        $pdf = Pdf::loadView('student.report.index', [
+            'sekolah' => $sekolah,
+            'siswa' => $siswa,
+            'kelas' => $kelas,
+            'semester' => $semester,
+            'tahun_ajaran' => $tahunAjaran,
+            'nilai' => $nilai,
+            'rata_rata' => $rataRata,
+            'kehadiran' => $kehadiran,
+            'catatan' => $catatan,
+            'kota' => $kota,
+            'tanggal' => $tanggal,
+            'wali_kelas' => $waliKelas,
+        ])->setPaper('a4', 'portrait');
+
+        return $pdf->stream('raport-' . ($siswa->nama ?: 'siswa') . '.pdf');
     }
 
     private function tenantId(): string

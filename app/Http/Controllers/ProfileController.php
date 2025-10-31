@@ -18,27 +18,30 @@ class ProfileController extends Controller
         $name = $profile->name ?? $user->name;
         $email = $user->email;
 
-        // Format member since date
         $memberSince = Carbon::parse($user->created_at)->format('F Y');
 
-        // Get roles
         $roles = collect($user->roles ?? [])
             ->map(fn($r) => is_string($r) ? $r : ($r->name ?? $r->slug ?? ''))
             ->filter()
-            ->map(fn($r) => ucwords(str_replace(['_', '-'], ' ', $r)))
+            ->map(function ($r) {
+                $r = str_replace(['_', '-'], ' ', $r);
+                return ucwords(trim($r));
+            })
             ->unique()
             ->values()
             ->toArray();
 
         $roleString = implode(', ', $roles);
 
-        // Determine role type for NIP/NIS label
-        $roleType = 'student'; // default
-        if (!empty($roles)) {
-            $firstRole = strtolower($roles[0]);
-            if (strpos($firstRole, 'teacher') !== false || strpos($firstRole, 'admin') !== false) {
-                $roleType = 'teacher';
-            }
+        $teacherRoles = ['Guru', 'Wali Kelas', 'Kepala Sekolah', 'Admin', 'Super Admin'];
+        $isTeacher = collect($roles)->contains(fn($r) => in_array($r, $teacherRoles, true));
+        $isSiswa = collect($roles)->contains('Siswa');
+
+        $roleType = 'lainnya';
+        if ($isTeacher) {
+            $roleType = 'teacher';
+        } elseif ($isSiswa) {
+            $roleType = 'siswa';
         }
 
         return view('profile.index', [
@@ -67,12 +70,10 @@ class ProfileController extends Controller
 
         $user = Auth::user();
 
-        // Check if current password is correct
         if (!Hash::check($request->current_password, $user->password)) {
             return back()->with('error', 'Current password is incorrect');
         }
 
-        // Update password
         $user->password = Hash::make($request->new_password);
         $user->save();
 
