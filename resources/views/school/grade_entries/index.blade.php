@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('title', 'E-Raport | Grade Entries')
+@section('title', 'E-Report | Grade Entries')
 
 @section('content')
 <div class="row">
@@ -11,10 +11,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Tahun Ajaran</label>
+                                <label>Academic Year</label>
                                 <select name="academic_year_id" class="form-control select2bs4"
                                     onchange="this.form.submit()">
-                                    <option value="">- Pilih -</option>
+                                    <option value="">- Select -</option>
                                     @foreach ($academicYears as $ay)
                                     <option value="{{ $ay->id }}" {{ $academic_year_id == $ay->id ? 'selected' : '' }}>
                                         {{ $ay->code }} {{ ($ay->status == 'Active') ? ' -- Active --' : '' }}
@@ -26,10 +26,10 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="class_id">Kelas</label>
+                                <label for="class_id">Class</label>
                                 <select name="class_id" class="form-control select2bs4" onchange="this.form.submit()"
                                     {{ empty($academic_year_id) ? 'disabled' : '' }}>
-                                    <option value="">- Pilih -</option>
+                                    <option value="">- Select -</option>
                                     @foreach ($classes as $c)
                                     <option value="{{ $c->id }}" {{ $class_id == $c->id ? 'selected' : '' }}>
                                         {{ $c->name }}
@@ -42,10 +42,10 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Mapel</label>
+                                <label>Subject</label>
                                 <select name="class_subject_id" class="form-control select2bs4"
                                     onchange="this.form.submit()" {{ empty($class_id) ? 'disabled' : '' }}>
-                                    <option value="">- Pilih -</option>
+                                    <option value="">- Select -</option>
                                     @foreach ($classSubjects as $cs)
                                     <option value="{{ $cs->id }}" {{ $class_subject_id == $cs->id ? 'selected' : '' }}>
                                         {{ $cs->subject->code ?? 'SUB' }} — {{ $cs->subject->name ?? 'Subject' }}
@@ -57,10 +57,10 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Siswa</label>
+                                <label>Student</label>
                                 <select name="enrollment_id" class="form-control select2bs4"
                                     onchange="this.form.submit()" {{ empty($class_subject_id) ? 'disabled' : '' }}>
-                                    <option value="">- Pilih -</option>
+                                    <option value="">- Select -</option>
                                     @foreach ($enrollments as $e)
                                     <option value="{{ $e->id }}" {{ $enrollment_id == $e->id ? 'selected' : '' }}>
                                         {{ $e->student->name ?? 'Student' }}
@@ -77,7 +77,7 @@
                                 <label>Assessment</label>
                                 <select name="assessment_id" class="form-control select2bs4"
                                     onchange="this.form.submit()" {{ empty($enrollment_id) ? 'disabled' : '' }}>
-                                    <option value="">- Pilih / Buat Baru -</option>
+                                    <option value="">- Select / Create New -</option>
                                     @foreach ($assessments as $a)
                                     <option value="{{ $a->id }}" {{ $assessment_id == $a->id ? 'selected' : '' }}>
                                         {{ $a->date }} — {{ $a->title }}
@@ -107,23 +107,23 @@
                     @endif
 
                     @if(!$assessment)
-                    {{-- Buat assessment baru cepat --}}
                     <div class="alert alert-info">
-                        Belum memilih assessment. Isi data berikut untuk membuat assessment baru (khusus siswa ini).
+                        No assessment selected. Fill in the following to create a new assessment (for this student
+                        only).
                     </div>
                     <div class="form-row">
                         <div class="form-group col-md-4">
-                            <label>Judul</label>
-                            <input type="text" name="title" class="form-control" placeholder="Mis. UTS Matematika"
+                            <label>Title</label>
+                            <input type="text" name="title" class="form-control" placeholder="E.g. Mathematics Midterm"
                                 required>
                         </div>
                         <div class="form-group col-md-3">
-                            <label>Tanggal</label>
+                            <label>Date</label>
                             <input type="date" name="date" class="form-control" value="{{ now()->toDateString() }}"
                                 required>
                         </div>
                         <div class="form-group col-md-5">
-                            <label>Komponen Penilaian</label>
+                            <label>Assessment Component</label>
                             <select name="assessment_component_id" class="form-control" required>
                                 @foreach(\App\Models\AssessmentComponent::where('tenant_id',
                                 auth()->user()->tenant_id)->orderBy('name')->get(['id','name','weight']) as $comp)
@@ -134,9 +134,9 @@
                     </div>
 
                     <div class="alert alert-secondary">
-                        <strong>Catatan:</strong> Items (indikator soal/KD) untuk assessment baru ini silakan buat di
-                        menu <em>Assessments → Items</em> setelah tersimpan,
-                        atau isi nilai nanti setelah items dibuat.
+                        <strong>Note:</strong> Please create items (question indicators/KD) for this new assessment in
+                        the <em>Assessments → Items</em> menu after saving,
+                        or enter scores later after the items are created.
                     </div>
                     @endif
 
@@ -145,9 +145,9 @@
                         <table class="table table-bordered table-sm">
                             <thead class="thead-light">
                                 <tr>
-                                    <th style="width:60%">Kompetensi / Item</th>
-                                    <th style="width:15%">Skor Maks</th>
-                                    <th style="width:25%">Nilai Siswa</th>
+                                    <th style="width:60%">Competency / Item</th>
+                                    <th style="width:15%">Max Score</th>
+                                    <th style="width:25%">Student Score</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -171,20 +171,20 @@
                     </div>
                     @elseif($assessment && !$items->count())
                     <div class="alert alert-warning">
-                        Assessment terpilih belum memiliki item. Buat item terlebih dahulu agar bisa mengisi nilai.
+                        The selected assessment has no items yet. Please create items first to enter scores.
                     </div>
                     @endif
 
                     <div class="mt-3 d-flex justify-content-between">
                         <div>
                             <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Simpan
+                                <i class="fas fa-save"></i> Save
                             </button>
                         </div>
                         @if($assessment)
                         <div>
                             <button type="submit" name="next_student" value="1" class="btn btn-outline-secondary">
-                                Simpan & Siswa Berikutnya
+                                Save & Next Student
                             </button>
                         </div>
                         @endif
@@ -192,7 +192,7 @@
                 </form>
                 @else
                 <div class="alert alert-info">
-                    Silakan pilih Tahun Ajaran → Kelas → Mapel → Siswa untuk mulai mengisi nilai.
+                    Please select Academic Year → Class → Subject → Student to start entering grades.
                 </div>
                 @endif
 

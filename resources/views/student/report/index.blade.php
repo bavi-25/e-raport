@@ -5,7 +5,6 @@
         <meta charset="UTF-8">
         <title>E-Raport Siswa</title>
         <style>
-            /* Gunakan font yang tersedia di DOMPDF */
             @page {
                 margin: 20mm 15mm;
             }
@@ -162,11 +161,12 @@
         <div class="container">
             {{-- Header --}}
             <div class="header">
-                <h1>{{ $sekolah['nama'] ?? 'NAMA SEKOLAH' }}</h1>
+                <h1>{{ $sekolah->name ?? 'NAMA SEKOLAH' }}</h1>
                 <h2>LAPORAN HASIL BELAJAR SISWA</h2>
-                <p>{{ $sekolah['alamat'] ?? 'Alamat Sekolah' }}</p>
+                {{-- <p>{{ $sekolah['alamat'] ?? 'Alamat Sekolah' }}</p>
                 <p>Telp: {{ $sekolah['telepon'] ?? '021-XXXXXXXX' }} | Email:
-                    {{ $sekolah['email'] ?? 'email@sekolah.sch.id' }}</p>
+                    {{ $sekolah['email'] ?? 'email@sekolah.sch.id' }}
+                </p> --}}
             </div>
 
             {{-- Info Siswa --}}
@@ -174,12 +174,12 @@
                 <tr>
                     <td class="info-label">Nama Siswa</td>
                     <td class="info-sep">:</td>
-                    <td>{{ $siswa->nama ?? 'Nama Lengkap Siswa' }}</td>
+                    <td>{{ $siswa->name ?? 'Nama Lengkap Siswa' }}</td>
                 </tr>
                 <tr>
-                    <td class="info-label">NIS / NISN</td>
+                    <td class="info-label">NIS</td>
                     <td class="info-sep">:</td>
-                    <td>{{ $siswa->nis ?? '000000' }} / {{ $siswa->nisn ?? '0000000000' }}</td>
+                    <td>{{ $siswa->nip_nis ?? '000000' }}</td>
                 </tr>
                 <tr>
                     <td class="info-label">Kelas / Semester</td>
@@ -199,12 +199,8 @@
                 <thead>
                     <tr>
                         <th style="width: 5%;">No</th>
-                        <th style="width: 35%;">Mata Pelajaran</th>
-                        <th style="width: 12%;">KKM</th>
-                        <th style="width: 12%;">Pengetahuan</th>
-                        <th style="width: 12%;">Keterampilan</th>
-                        <th style="width: 12%;">Nilai Akhir</th>
-                        <th style="width: 12%;">Predikat</th>
+                        <th style="width: 90%;">Mata Pelajaran</th>
+                        <th style="width: 15%;">Nilai Akhir</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -212,33 +208,22 @@
                     <tr>
                         <td class="center">{{ $index + 1 }}</td>
                         <td class="mapel">{{ $item['mata_pelajaran'] }}</td>
-                        <td class="center">{{ $item['kkm'] }}</td>
-                        <td class="center">{{ $item['pengetahuan'] }}</td>
-                        <td class="center">{{ $item['keterampilan'] }}</td>
                         <td class="center">{{ $item['nilai_akhir'] }}</td>
-                        <td class="center">{{ $item['predikat'] }}</td>
                     </tr>
                     @empty
                     <tr>
-                        <td class="center">1</td>
-                        <td class="mapel">Pendidikan Agama dan Budi Pekerti</td>
-                        <td class="center">75</td>
-                        <td class="center">85</td>
-                        <td class="center">88</td>
-                        <td class="center">86</td>
-                        <td class="center">B</td>
+                        <td colspan="3" class="center">No academic records found.</td>
                     </tr>
                     @endforelse
                     <tr class="nilai-rata">
-                        <td colspan="5" style="text-align:right; padding-right:6px;">RATA-RATA NILAI</td>
-                        <td class="center">{{ $rata_rata ?? '84' }}</td>
-                        <td class="center">{{ $predikat_rata ?? 'B' }}</td>
+                        <td colspan="2" style="text-align:right; padding-right:6px;">RATA-RATA NILAI</td>
+                        <td class="center">{{ $rata_rata ?? '0' }}</td>
                     </tr>
                 </tbody>
             </table>
 
             {{-- Ketidakhadiran --}}
-            <div class="section-title">B. Ketidakhadiran</div>
+            {{-- <div class="section-title">B. Ketidakhadiran</div>
             <table>
                 <thead>
                     <tr>
@@ -250,27 +235,27 @@
                     <tr>
                         <td class="mapel">Sakit</td>
                         <td class="center">{{ $kehadiran->sakit ?? '0' }} hari</td>
-                    </tr>
-                    <tr>
-                        <td class="mapel">Izin</td>
-                        <td class="center">{{ $kehadiran->izin ?? '0' }} hari</td>
-                    </tr>
-                    <tr>
-                        <td class="mapel">Tanpa Keterangan</td>
-                        <td class="center">{{ $kehadiran->alpha ?? '0' }} hari</td>
-                    </tr>
-                </tbody>
-            </table>
+            </tr>
+            <tr>
+                <td class="mapel">Izin</td>
+                <td class="center">{{ $kehadiran->izin ?? '0' }} hari</td>
+            </tr>
+            <tr>
+                <td class="mapel">Tanpa Keterangan</td>
+                <td class="center">{{ $kehadiran->alpha ?? '0' }} hari</td>
+            </tr>
+            </tbody>
+            </table> --}}
 
             {{-- Catatan Wali Kelas --}}
-            <div class="section-title">C. Catatan Wali Kelas</div>
+            {{-- <div class="section-title">C. Catatan Wali Kelas</div>
             <table style="width:100%; border-collapse:collapse; margin-bottom: 8px;">
                 <tr>
                     <td style="border:1px solid #000; padding:10px; min-height:80px;">
                         {{ $catatan ?? 'Siswa menunjukkan perkembangan yang baik dalam proses pembelajaran. Tetap pertahankan prestasi dan tingkatkan kedisiplinan.' }}
-                    </td>
-                </tr>
-            </table>
+            </td>
+            </tr>
+            </table> --}}
 
             {{-- Tanda Tangan --}}
             <div class="signature-wrap">

@@ -57,7 +57,6 @@ class GradeEntryController extends Controller
                 ->get(['id', 'class_id', 'subject_id', 'teacher_id', 'tenant_id']);
         }
 
-        // Daftar siswa (enrollments) di kelas & tahun ajaran
         $enrollments = collect();
         if ($classId && $academicYearId) {
             $enrollments = Enrollment::query()
@@ -69,7 +68,6 @@ class GradeEntryController extends Controller
                 ->get(['id', 'student_id', 'class_id', 'academic_year_id', 'tenant_id']);
         }
 
-        // Daftar assessment untuk siswa & mapel
         $assessments = collect();
         if ($enrollmentId && $classSubjectId) {
             $assessments = Assessment::query()
@@ -81,7 +79,6 @@ class GradeEntryController extends Controller
                 ->get(['id', 'title', 'date', 'enrollment_id', 'class_subject_id', 'assessment_component_id', 'tenant_id']);
         }
 
-        // Detail assessment terpilih + items + nilai siswa
         $assessment = null;
         $items = collect();
         $gradeByItem = [];
@@ -106,7 +103,7 @@ class GradeEntryController extends Controller
 
                 $grades = GradeEntry::query()
                     ->where('tenant_id', $tenantId)
-                    ->where('student_id', $studentId) // ← tanpa schema_has_column: diasumsikan kolom wajib ada
+                    ->where('student_id', $studentId)
                     ->whereIn('assessment_item_id', $items->pluck('id'))
                     ->get(['id', 'assessment_item_id', 'final_score']);
 
@@ -156,7 +153,6 @@ class GradeEntryController extends Controller
 
         DB::transaction(function () use ($tenantId, $validated, &$assessment) {
 
-            // Pastikan enrollment sesuai tenant + filter class & year
             $enrollment = Enrollment::query()
                 ->where('tenant_id', $tenantId)
                 ->where('id', $validated['enrollment_id'])
@@ -164,7 +160,6 @@ class GradeEntryController extends Controller
                 ->where('academic_year_id', $validated['academic_year_id'])
                 ->firstOrFail();
 
-            // Pastikan class_subject sesuai tenant & class
             $classSubject = ClassSubject::query()
                 ->where('tenant_id', $tenantId)
                 ->where('id', $validated['class_subject_id'])
@@ -172,7 +167,6 @@ class GradeEntryController extends Controller
                 ->firstOrFail();
 
             if (!empty($validated['assessment_id'])) {
-                // Pakai assessment existing (tetap dibatasi tenant & konsisten)
                 $assessment = Assessment::query()
                     ->where('tenant_id', $tenantId)
                     ->where('id', $validated['assessment_id'])
@@ -180,7 +174,6 @@ class GradeEntryController extends Controller
                     ->where('class_subject_id', $classSubject->id)
                     ->firstOrFail();
             } else {
-                // Buat assessment baru
                 $assessment = Assessment::create([
                     'tenant_id' => $tenantId,
                     'enrollment_id' => $enrollment->id,
@@ -191,12 +184,10 @@ class GradeEntryController extends Controller
                 ]);
             }
 
-            // Simpan nilai per item untuk siswa ini
             $scores = $validated['scores'] ?? [];
             $studentId = $enrollment->student_id;
 
             if (!empty($scores)) {
-                // Hanya izinkan item yang memang milik assessment ini
                 $validItemIds = AssessmentItem::query()
                     ->where('tenant_id', $tenantId)
                     ->where('assessment_id', $assessment->id)
@@ -222,14 +213,12 @@ class GradeEntryController extends Controller
             }
         });
 
-        // Redirect params
         $params = [
             'academic_year_id' => $validated['academic_year_id'],
             'class_id' => $validated['class_id'],
             'class_subject_id' => $validated['class_subject_id'],
         ];
 
-        // Lanjut ke siswa berikutnya?
         if ($request->boolean('next_student')) {
             $list = Enrollment::query()
                 ->where('tenant_id', $tenantId)
@@ -251,7 +240,6 @@ class GradeEntryController extends Controller
             }
         }
 
-        // Kembali ke siswa saat ini + set assessment_id agar item terload
         $params['enrollment_id'] = $validated['enrollment_id'];
         $params['assessment_id'] = $assessment->id;
 

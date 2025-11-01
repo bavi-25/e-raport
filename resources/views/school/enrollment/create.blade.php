@@ -72,8 +72,8 @@
                                 </select>
                                 @error('academic_year_id') <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror
-                                <small class="form-text text-muted">Biarkan kosong untuk otomatis memakai Tahun Ajaran
-                                    yang <b>Active</b>.</small>
+                                <small class="form-text text-muted">Leave it blank to automatically use the
+                                    <b>Active</b> Academic Year.</small>
                             </div>
                         </div>
                     </div>
