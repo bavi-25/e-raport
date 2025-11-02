@@ -205,9 +205,10 @@
                             data-accordion="false">
 
                             <li class="nav-item">
-                                <a href="/dashboard" class="nav-link {{ request()->routeIs('dashboard*') ? 'active' : '' }}">
-                                    <svg class="nav-icon" viewBox="0 0 32 32" fill="currentColor" width="20" height="20" aria-hidden="true"
-                                        xmlns="http://www.w3.org/2000/svg">
+                                <a href="/dashboard"
+                                    class="nav-link {{ request()->routeIs('dashboard*') ? 'active' : '' }}">
+                                    <svg class="nav-icon" viewBox="0 0 32 32" fill="currentColor" width="20" height="20"
+                                        aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
                                         <rect x="24" y="21" width="2" height="5" />
                                         <rect x="20" y="16" width="2" height="10" />
                                         <path d="M11,26a5.0059,5.0059,0,0,1-5-5H8a3,3,0,1,0,3-3V16a5,5,0,0,1,0,10Z" />
@@ -244,6 +245,15 @@
                             </li>
                             @endrole
                             @role('Kepala Sekolah|Admin')
+                            <li class="nav-item">
+                                <a href="{{ route('school.tenant.index') }}"
+                                    class="nav-link {{ request()->routeIs('school.tenant.*') ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-school"></i>
+                                    <p>
+                                        School
+                                    </p>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="{{ route('school.subjects.index') }}"
                                     class="nav-link {{ request()->routeIs('school.subjects.*') ? 'active' : '' }}">

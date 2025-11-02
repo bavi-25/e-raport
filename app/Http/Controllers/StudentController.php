@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Profile;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 
 class StudentController extends Controller
 {
@@ -51,11 +53,10 @@ class StudentController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'profile_name' => ['nullable', 'string', 'max:255'],
-            'nip_nis' => ['nullable', 'string', 'max:50'],
+            'nip_nis' => ['nullable', 'string', 'max:50', Rule::unique('profiles', 'nip_nis')],
             'birth_date' => ['nullable', 'date'],
-            'religion' => ['nullable', 'string', 'max:50'],
-            'gender' => ['nullable', 'string', 'max:10'],
+            'religion' => ['nullable', 'string', 'in:Islam,Kristen,Katolik,Hindu,Budha,Konghucu'],
+            'gender' => ['nullable', 'string', 'in:Laki-laki,Perempuan'],
             'phone' => ['nullable', 'string', 'max:50'],
             'address' => ['nullable', 'string', 'max:500'],
         ]);
@@ -64,7 +65,7 @@ class StudentController extends Controller
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => $data['password'],
+                'password' => Hash::make($data['password']),
                 'tenant_id' => $tenantId,
             ]);
 
@@ -73,7 +74,7 @@ class StudentController extends Controller
             Profile::updateOrCreate(
                 ['user_id' => $user->id],
                 [
-                    'name' => $data['profile_name'] ?? $data['name'],
+                    'name' => $data['name'],
                     'nip_nis' => $data['nip_nis'] ?? null,
                     'birth_date' => $data['birth_date'] ?? null,
                     'religion' => $data['religion'] ?? null,
@@ -86,8 +87,11 @@ class StudentController extends Controller
 
         $this->forgetCaches($tenantId);
 
-        return redirect()->route('school.students.index')->with('success', 'Student created.');
+        return redirect()
+            ->route('school.students.index')
+            ->with('success', 'Student created.');
     }
+
 
     public function edit(string $id)
     {
@@ -115,38 +119,47 @@ class StudentController extends Controller
         $student = User::role('Siswa')
             ->where('tenant_id', $tenantId)
             ->where('id', $id)
+            ->with('profile')
             ->firstOrFail();
 
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($student->id)],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'profile_name' => ['nullable', 'string', 'max:255'],
-            'nip_nis' => ['nullable', 'string', 'max:50'],
-            'birth_date' => ['nullable', 'date'],
-            'religion' => ['nullable', 'string', 'max:50'],
-            'gender' => ['nullable', 'string', 'max:10'],
-            'phone' => ['nullable', 'string', 'max:50'],
-            'address' => ['nullable', 'string', 'max:500'],
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore($student->id)
+            ],
+            'nip_nis' => [
+                'required',
+                'string',
+                Rule::unique('profiles', 'nip_nis')->ignore(optional($student->profile)->id) // ignore by profile id
+            ],
+            'birth_date' => ['required', 'date'],
+            'religion' => ['required', 'string', 'in:Islam,Kristen,Katolik,Hindu,Budha,Konghucu'],
+            'gender' => ['required', 'string', 'in:Laki-laki,Perempuan'],
+            'phone' => ['required', 'string', 'max:50'],
+            'address' => ['required', 'string', 'max:500'],
         ]);
 
         DB::transaction(function () use ($student, $data) {
-            $student->update([
+            $updateUser = [
                 'name' => $data['name'],
                 'email' => $data['email'],
-                ...(isset($data['password']) && $data['password'] ? ['password' => $data['password']] : []),
-            ]);
+            ];
+
+            $student->update($updateUser);
 
             Profile::updateOrCreate(
                 ['user_id' => $student->id],
                 [
-                    'name' => $data['profile_name'] ?? $data['name'],
-                    'nip_nis' => $data['nip_nis'] ?? null,
-                    'birth_date' => $data['birth_date'] ?? null,
-                    'religion' => $data['religion'] ?? null,
-                    'gender' => $data['gender'] ?? null,
-                    'phone' => $data['phone'] ?? null,
-                    'address' => $data['address'] ?? null,
+                    'name' => $data['name'],
+                    'nip_nis' => $data['nip_nis'],
+                    'birth_date' => $data['birth_date'],
+                    'religion' => $data['religion'],
+                    'gender' => $data['gender'],
+                    'phone' => $data['phone'],
+                    'address' => $data['address'],
                 ]
             );
         });
@@ -155,7 +168,6 @@ class StudentController extends Controller
 
         return redirect()->route('school.students.index')->with('success', 'Student updated.');
     }
-
     public function destroy(string $id)
     {
         $tenantId = $this->tenantId();
