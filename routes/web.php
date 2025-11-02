@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SchoolController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
@@ -61,12 +62,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
     Route::post('/profile/change-password', [ProfileController::class, 'changePassword'])->name('profile.change-password');
 });
+
+
 //SUPER ADMIN
 Route::middleware(['auth', 'role:Super-Admin'])->group(function () {
     Route::resource('/super-admin/tenants', TenantController::class)->names('super_admin.tenants');
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'role:Kepala Sekolah|Admin'])->group(function () {
     Route::resource('/school/academic-years', AcademicYearController::class)->names('school.academic_year');
     Route::resource('/school/grade_levels', GradeLevelController::class)->names('school.grade_levels');
     Route::resource('/school/class_rooms', ClassRoomController::class)->names('school.class_rooms');
@@ -76,6 +79,9 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('/school/class_subjects', ClassSubjectController::class)->names('school.class_subjects');
     Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
     Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
+
+    Route::get('/school/tenant/', [SchoolController::class, 'index'])->name('school.tenant.index');
+
 });
 Route::post('/school/report/calculate-final-grades', [ReportController::class, 'calculateFinalGrades'])
     ->name('school.report.calculateFinalGrades');
