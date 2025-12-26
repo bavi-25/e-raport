@@ -1,4 +1,4 @@
-<div class="row">
+{{-- <div class="row">
     <div class="col-12 col-sm-6 col-md-3">
         <div class="info-box">
             <span class="info-box-icon bg-info elevation-1"><i class="fas fa-cog"></i></span>
@@ -58,4 +58,4 @@
         <!-- /.info-box -->
     </div>
     <!-- /.col -->
-</div>
+</div> --}}

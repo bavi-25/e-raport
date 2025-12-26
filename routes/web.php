@@ -13,6 +13,7 @@ use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\ClassRoomController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AssessmentController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\EnrollmentController;
 use App\Http\Controllers\GradeEntryController;
 use App\Http\Controllers\GradeLevelController;
@@ -69,7 +70,7 @@ Route::middleware(['auth', 'role:Super-Admin'])->group(function () {
     Route::resource('/super-admin/tenants', TenantController::class)->names('super_admin.tenants');
 });
 
-Route::middleware(['auth', 'role:Kepala Sekolah|Admin'])->group(function () {
+Route::middleware(['auth', 'role:Kepala Sekolah|Admin|Wali Kelas'])->group(function () {
     Route::resource('/school/academic-years', AcademicYearController::class)->names('school.academic_year');
     Route::resource('/school/grade_levels', GradeLevelController::class)->names('school.grade_levels');
     Route::resource('/school/class_rooms', ClassRoomController::class)->names('school.class_rooms');
@@ -90,6 +91,10 @@ Route::middleware(['auth', 'role:Guru|Wali Kelas'])->group(function () {
     Route::get('/school/grade-entries', [GradeEntryController::class, 'index'])->name('school.grade_entries.index');
     Route::post('/school/grade-entries', action: [GradeEntryController::class, 'store'])->name('school.grade_entries.store');
     Route::get('/school/report', [ReportController::class, 'index'])->name('school.report.index');
+    Route::resource('/school/attendance', AttendanceController::class)->names('school.attendance');
+    Route::get('/school/attendance/start/{id}', [AttendanceController::class, 'start'])->name('school.attendance.start');
+    Route::get('/school/attendance/history/{id}', [AttendanceController::class, 'history'])->name('school.attendance.history');
+
 });
 
 
