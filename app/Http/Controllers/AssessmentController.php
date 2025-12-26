@@ -243,11 +243,11 @@ class AssessmentController extends Controller
         $data = $request->validate([
             'title' => ['required', 'string', 'max:255'],
             'date' => ['required', 'date'],
-            'class_subject_id' => ['required', 'uuid'],
-            'assessment_component_id' => ['required', 'uuid'],
+            'class_subject_id' => ['required'],
+            'assessment_component_id' => ['required'],
 
             'items' => ['nullable', 'array'],
-            'items.*.id' => ['nullable', 'uuid'],
+            'items.*.id' => ['nullable'],
             'items.*.competency_code' => ['required_with:items.*.max_score', 'string', 'max:100'],
             'items.*.max_score' => ['required_with:items.*.competency_code', 'numeric', 'min:0', 'max:100'],
         ]);
@@ -286,7 +286,6 @@ class AssessmentController extends Controller
             $existingIds = $existingItems->pluck('id')->map(fn($v) => (string) $v)->all();
 
             $payloadItems = collect($data['items'] ?? [])
-                // Buang baris kosong total bila ada
                 ->filter(function ($row) {
                     $cc = trim((string) ($row['competency_code'] ?? ''));
                     return $cc !== '';

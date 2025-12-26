@@ -39,6 +39,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
@@ -81,7 +82,7 @@
                                     @foreach ($assessments as $a)
                                     <option value="{{ $a->id }}" {{ $assessment_id == $a->id ? 'selected' : '' }}>
                                         {{ $a->date }} — {{ $a->title }}
-                                        ({{ $a->assessmentComponent->name ?? 'Comp' }})
+                                        ({{ $a->assessmentComponent->name ?? 'Component' }})
                                     </option>
                                     @endforeach
                                 </select>
@@ -108,13 +109,14 @@
 
                     @if(!$assessment)
                     <div class="alert alert-info">
-                        No assessment selected. Fill in the following to create a new assessment (for this student
-                        only).
+                        No assessment selected. Please fill in the following fields to create a new assessment
+                        (for this student only).
                     </div>
+
                     <div class="form-row">
                         <div class="form-group col-md-4">
                             <label>Title</label>
-                            <input type="text" name="title" class="form-control" placeholder="E.g. Mathematics Midterm"
+                            <input type="text" name="title" class="form-control" placeholder="e.g. Mathematics Midterm"
                                 required>
                         </div>
                         <div class="form-group col-md-3">
@@ -127,16 +129,19 @@
                             <select name="assessment_component_id" class="form-control" required>
                                 @foreach(\App\Models\AssessmentComponent::where('tenant_id',
                                 auth()->user()->tenant_id)->orderBy('name')->get(['id','name','weight']) as $comp)
-                                <option value="{{ $comp->id }}">{{ $comp->name }} ({{ $comp->weight }}%)</option>
+                                <option value="{{ $comp->id }}">
+                                    {{ $comp->name }} ({{ $comp->weight }}%)
+                                </option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
 
                     <div class="alert alert-secondary">
-                        <strong>Note:</strong> Please create items (question indicators/KD) for this new assessment in
-                        the <em>Assessments → Items</em> menu after saving,
-                        or enter scores later after the items are created.
+                        <strong>Note:</strong>
+                        Please create items (question indicators / competencies) for this new assessment
+                        in the <em>Assessments → Items</em> menu after saving,
+                        or enter the scores later once the items have been created.
                     </div>
                     @endif
 
@@ -156,9 +161,7 @@
                                 $val = $gradeByItem[$it->id] ?? '';
                                 @endphp
                                 <tr>
-                                    <td>
-                                        <strong>{{ $it->competency_code }}</strong>
-                                    </td>
+                                    <td><strong>{{ $it->competency_code }}</strong></td>
                                     <td>{{ number_format((float)$it->max_score, 2) }}</td>
                                     <td>
                                         <input type="number" step="0.01" min="0" max="{{ (float)$it->max_score }}"
@@ -171,22 +174,20 @@
                     </div>
                     @elseif($assessment && !$items->count())
                     <div class="alert alert-warning">
-                        The selected assessment has no items yet. Please create items first to enter scores.
+                        The selected assessment does not have any items yet.
+                        Please create items first before entering scores.
                     </div>
                     @endif
 
                     <div class="mt-3 d-flex justify-content-between">
-                        <div>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fas fa-save"></i> Save
-                            </button>
-                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save
+                        </button>
+
                         @if($assessment)
-                        <div>
-                            <button type="submit" name="next_student" value="1" class="btn btn-outline-secondary">
-                                Save & Next Student
-                            </button>
-                        </div>
+                        <button type="submit" name="next_student" value="1" class="btn btn-outline-secondary">
+                            Save & Next Student
+                        </button>
                         @endif
                     </div>
                 </form>
@@ -195,9 +196,9 @@
                     Please select Academic Year → Class → Subject → Student to start entering grades.
                 </div>
                 @endif
-
             </div>
         </div>
+
     </div>
 </div>
 @endsection

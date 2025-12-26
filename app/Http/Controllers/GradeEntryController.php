@@ -114,7 +114,7 @@ class GradeEntryController extends Controller
         }
 
         return view('school.grade_entries.index', [
-            'page' => 'Input Nilai Siswa',
+            'page' => 'Student Grade Entry',
             'academicYears' => $academicYears,
             'classes' => $classes,
             'classSubjects' => $classSubjects,

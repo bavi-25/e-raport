@@ -36,4 +36,8 @@ class ClassSubject extends Model
     {
         return $this->hasMany(\App\Models\FinalGrade::class, 'class_subject_id');
     }
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'class_subject_id');
+    }
 }
