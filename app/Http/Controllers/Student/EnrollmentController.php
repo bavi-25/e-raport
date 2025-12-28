@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Student;
 
 
+use View;
+use App\Models\Tenant;
 use App\Models\Enrollment;
 use App\Models\ClassSubject;
-use App\Models\Tenant;
+use App\Models\AttendanceEntry;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use View;
 
 class EnrollmentController extends Controller
 {
@@ -147,6 +148,81 @@ class EnrollmentController extends Controller
             'assessmentSummaries' => $assessmentSummaries,
         ]);
     }
+    // public function generateRaport($enrollmentId)
+    // {
+    //     $enrollment = Enrollment::query()
+    //         ->where('tenant_id', $this->tenantId())
+    //         ->where('student_id', $this->studentId())
+    //         ->with([
+    //             'student',
+    //             'academicYear:id,code,term,status',
+    //             'class:id,name,academic_year_id,tenant_id,homeroom_teacher_id',
+    //             'class.homeroomTeacher:id,name',
+    //             'class.classSubjects:id,class_id,subject_id,teacher_id',
+    //             'class.classSubjects.subject:id,code,name',
+    //             'class.classSubjects.teacher:id,name',
+    //             'class.classSubjects.finalGrades' => function ($q) use ($enrollmentId) {
+    //                 $q->where('student_id', function ($sub) use ($enrollmentId) {
+    //                     $sub->select('student_id')
+    //                         ->from('enrollments')
+    //                         ->where('id', $enrollmentId);
+    //                 });
+    //             },
+    //         ])
+    //         ->findOrFail($enrollmentId);
+
+    //     $siswa = $enrollment->student;
+    //     $kelas = (object) ['nama' => $enrollment->class->name ?? '-'];
+    //     $semester = $enrollment->academicYear->term ?? '-';
+    //     $tahunAjaran = $enrollment->academicYear->code ?? '-';
+    //     $waliKelas = (object) [
+    //         'nama' => $enrollment->class->homeroomTeacher->name ?? null,
+    //         'nip' => null,
+    //     ];
+
+    //     $nilai = [];
+    //     foreach ($enrollment->class->classSubjects as $cs) {
+    //         $fg = $cs->finalGrades->first();
+    //         $final = $fg->final_score ?? null;
+
+    //         $nilai[] = [
+    //             'mata_pelajaran' => $cs->subject->name ?? '(Tidak diketahui)',
+    //             'nilai_akhir' => $final !== null ? number_format((float) $final, 2) : '-',
+    //         ];
+    //     }
+
+    //     $angka = [];
+    //     foreach ($nilai as $n) {
+    //         $v = is_string($n['nilai_akhir']) ? str_replace(',', '.', $n['nilai_akhir']) : $n['nilai_akhir'];
+    //         if (is_numeric($v))
+    //             $angka[] = (float) $v;
+    //     }
+    //     $rataRata = count($angka) ? number_format(array_sum($angka) / count($angka), 2) : '-';
+
+    //     $sekolah = Tenant::where('id', $this->tenantId())->first();
+
+    //     $kehadiran = (object) ['sakit' => 0, 'izin' => 0, 'alpha' => 0];
+    //     $catatan = null;
+    //     $kota = 'Kota';
+    //     $tanggal = now()->format('d F Y');
+
+    //     $pdf = Pdf::loadView('student.report.index', [
+    //         'sekolah' => $sekolah,
+    //         'siswa' => $siswa,
+    //         'kelas' => $kelas,
+    //         'semester' => $semester,
+    //         'tahun_ajaran' => $tahunAjaran,
+    //         'nilai' => $nilai,
+    //         'rata_rata' => $rataRata,
+    //         'kehadiran' => $kehadiran,
+    //         'catatan' => $catatan,
+    //         'kota' => $kota,
+    //         'tanggal' => $tanggal,
+    //         'wali_kelas' => $waliKelas,
+    //     ])->setPaper('a4', 'portrait');
+
+    //     return $pdf->stream('raport-' . ($siswa->nama ?: 'siswa') . '.pdf');
+    // }
     public function generateRaport($enrollmentId)
     {
         $enrollment = Enrollment::query()
@@ -171,6 +247,9 @@ class EnrollmentController extends Controller
             ->findOrFail($enrollmentId);
 
         $siswa = $enrollment->student;
+        $studentId = $siswa->id;
+        $classId = $enrollment->class_id;
+
         $kelas = (object) ['nama' => $enrollment->class->name ?? '-'];
         $semester = $enrollment->academicYear->term ?? '-';
         $tahunAjaran = $enrollment->academicYear->code ?? '-';
@@ -179,30 +258,43 @@ class EnrollmentController extends Controller
             'nip' => null,
         ];
 
+        // === Ambil nilai + kehadiran PER MATA PELAJARAN ===
         $nilai = [];
         foreach ($enrollment->class->classSubjects as $cs) {
-            $fg = $cs->finalGrades->first();
-            $final = $fg->final_score ?? null;
+            $subjectName = $cs->subject->name ?? '(Tidak diketahui)';
+            $finalGrade = $cs->finalGrades->first();
+            $nilaiAkhir = $finalGrade?->final_score ? number_format((float) $finalGrade->final_score, 2) : '-';
+
+            // Hitung kehadiran untuk mata pelajaran ini
+            $kehadiranMapel = AttendanceEntry::query()
+                ->where('student_id', $studentId)
+                ->whereHas('attendance', function ($q) use ($cs) {
+                    $q->where('class_subject_id', $cs->id);
+                })
+                ->selectRaw("
+                SUM(CASE WHEN status IN ('present', 'late') THEN 1 ELSE 0 END) as hadir,
+                SUM(CASE WHEN status IN ('absent', 'excused') THEN 1 ELSE 0 END) as tidak_hadir
+            ")
+                ->first();
+
+            $hadir = $kehadiranMapel?->hadir ?? 0;
+            $tidakHadir = $kehadiranMapel?->tidak_hadir ?? 0;
 
             $nilai[] = [
-                'mata_pelajaran' => $cs->subject->name ?? '(Tidak diketahui)',
-                'nilai_akhir' => $final !== null ? number_format((float) $final, 2) : '-',
+                'mata_pelajaran' => $subjectName,
+                'nilai_akhir' => $nilaiAkhir,
+                'hadir' => $hadir,
+                'tidak_hadir' => $tidakHadir,
             ];
         }
 
-        $angka = [];
-        foreach ($nilai as $n) {
-            $v = is_string($n['nilai_akhir']) ? str_replace(',', '.', $n['nilai_akhir']) : $n['nilai_akhir'];
-            if (is_numeric($v))
-                $angka[] = (float) $v;
-        }
+        // Hitung rata-rata nilai (hanya dari nilai akhir yang valid)
+        $angka = array_filter(array_column($nilai, 'nilai_akhir'), fn($v) => is_numeric(str_replace(',', '.', $v)));
+        $angka = array_map(fn($v) => (float) str_replace(',', '.', $v), $angka);
         $rataRata = count($angka) ? number_format(array_sum($angka) / count($angka), 2) : '-';
 
         $sekolah = Tenant::where('id', $this->tenantId())->first();
-
-        $kehadiran = (object) ['sakit' => 0, 'izin' => 0, 'alpha' => 0];
-        $catatan = null;
-        $kota = 'Kota';
+        $kota = 'Jakarta'; // atau ambil dari tenant
         $tanggal = now()->format('d F Y');
 
         $pdf = Pdf::loadView('student.report.index', [
@@ -211,18 +303,15 @@ class EnrollmentController extends Controller
             'kelas' => $kelas,
             'semester' => $semester,
             'tahun_ajaran' => $tahunAjaran,
-            'nilai' => $nilai,
+            'nilai' => $nilai,           // sekarang berisi hadir & tidak_hadir
             'rata_rata' => $rataRata,
-            'kehadiran' => $kehadiran,
-            'catatan' => $catatan,
             'kota' => $kota,
             'tanggal' => $tanggal,
             'wali_kelas' => $waliKelas,
         ])->setPaper('a4', 'portrait');
 
-        return $pdf->stream('raport-' . ($siswa->nama ?: 'siswa') . '.pdf');
+        return $pdf->stream('raport-' . ($siswa->name ?? 'siswa') . '.pdf');
     }
-
     private function tenantId(): string
     {
         return (string) Auth::user()->tenant_id;

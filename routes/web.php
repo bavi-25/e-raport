@@ -79,8 +79,7 @@ Route::middleware(['auth', 'role:Kepala Sekolah|Admin|Wali Kelas'])->group(funct
     Route::resource('/school/students', StudentController::class)->names('school.students');
     Route::resource('/school/class_subjects', ClassSubjectController::class)->names('school.class_subjects');
     Route::resource('/school/enrollments', EnrollmentController::class)->names('school.enrollments');
-    Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
-
+    
     Route::get('/school/tenant/', [SchoolController::class, 'index'])->name('school.tenant.index');
 
 });
@@ -94,7 +93,7 @@ Route::middleware(['auth', 'role:Guru|Wali Kelas'])->group(function () {
     Route::resource('/school/attendance', AttendanceController::class)->names('school.attendance');
     Route::get('/school/attendance/start/{id}', [AttendanceController::class, 'start'])->name('school.attendance.start');
     Route::get('/school/attendance/history/{id}', [AttendanceController::class, 'history'])->name('school.attendance.history');
-
+    Route::resource('/school/assessments', AssessmentController::class)->names('school.assessments');
 });
 
 
