@@ -194,31 +194,39 @@
             </table>
 
             {{-- Nilai Akademik --}}
-            <div class="section-title">A. Nilai Akademik</div>
+            <div class="section-title">A. Nilai Akademik dan Kehadiran</div>
             <table>
                 <thead>
                     <tr>
                         <th style="width: 5%;">No</th>
-                        <th style="width: 90%;">Mata Pelajaran</th>
+                        <th style="width: 45%;">Mata Pelajaran</th>
                         <th style="width: 15%;">Nilai Akhir</th>
+                        <th style="width: 15%;">Hadir</th>
+                        <th style="width: 20%;">Tidak Hadir</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse(($nilai ?? []) as $index => $item)
+                    @forelse($nilai as $index => $item)
                     <tr>
                         <td class="center">{{ $index + 1 }}</td>
                         <td class="mapel">{{ $item['mata_pelajaran'] }}</td>
                         <td class="center">{{ $item['nilai_akhir'] }}</td>
+                        <td class="center">{{ $item['hadir'] }} x</td>
+                        <td class="center">{{ $item['tidak_hadir'] }} x</td>
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="3" class="center">No academic records found.</td>
+                        <td colspan="5" class="center">Tidak ada data nilai.</td>
                     </tr>
                     @endforelse
+            
+                    @if(count($nilai) > 0)
                     <tr class="nilai-rata">
                         <td colspan="2" style="text-align:right; padding-right:6px;">RATA-RATA NILAI</td>
-                        <td class="center">{{ $rata_rata ?? '0' }}</td>
+                        <td class="center">{{ $rata_rata }}</td>
+                        <td colspan="2"></td>
                     </tr>
+                    @endif
                 </tbody>
             </table>
 
