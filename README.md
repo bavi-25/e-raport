@@ -1,6 +1,6 @@
 # E-RAPORT
 
-![Laravel](https://img.shields.io/badge/Laravel-11-red?logo=laravel)
+![Laravel](https://img.shields.io/badge/Laravel-12-red?logo=laravel)
 ![PHP](https://img.shields.io/badge/PHP-8.2-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Status](https://img.shields.io/badge/status-Dalam%20Pengembangan-yellow)
@@ -26,9 +26,8 @@ Aplikasi ini mendukung sistem multi-tenant, sehingga satu instalasi bisa digunak
 
 - **Backend**: Laravel 12 (PHP 8.2+)
 - **Database**: MySQL
-- **Authentication**: Laravel Sanctum / Built-in Auth + Spatie Roles
-- **Frontend**: Blade Template (bisa dikembangkan ke Inertia/Vue/Livewire nantinya)
-
+- **Authentication**: Laravel Sanctum + Spatie Roles
+- **Frontend**: Blade Template
 ## Model & Relasi Utama
 
 Berikut adalah gambaran relasi utama dalam aplikasi:
