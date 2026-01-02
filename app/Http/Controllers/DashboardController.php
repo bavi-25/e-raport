@@ -21,25 +21,30 @@ class DashboardController extends Controller
             ->values()
             ->toArray();
         $data = $this->getData($roles);
+        //dd($data);
 
         return view('dashboard.index', $data);
     }
 
     private function getData(array $roles): array
     {
-        // Gunakan namespace per-role agar aman untuk multi-role
+
         $data = [
             'roles' => $roles,
             'page' => 'Dashboard',
-            'stats' => [],   // ringkasan angka global (boleh kosong)
-            'widgets' => [],   // data per-role: widgets['guru'], widgets['siswa'], dst.
+            'stats' => [],
+            'widgets' => [],
         ];
 
         if (in_array('super_admin', $roles)) {
             $data['stats']['tenantCount'] = Tenant::count();
-            $data['stats']['userCount'] = User::count();
+            $data['stats']['userCount'] = User::where('name' ,'!=', 'Super Admin')->count();
+            $data['stats']['activeTenants'] = Tenant::where('status', true)->count();
+            $data['stats']['studentsCount'] = User::whereHas('roles', function ($query) {
+                $query->where('name', 'Siswa');
+            })->count();
             $data['widgets']['super_admin'] = [
-                // isi jika perlu
+                'tenant_growth' => Tenant::select('id', 'name', 'npsn')->withCount('users')->get(),
             ];
         }
 

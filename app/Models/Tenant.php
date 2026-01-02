@@ -20,4 +20,9 @@ class Tenant extends Model
     {
         return $this->hasOne(TenantProfile::class, 'tenant_id');
     }
+    
+    public function users()
+    {
+        return $this->hasMany(User::class, 'tenant_id', 'id');
+    }
 }
