@@ -218,7 +218,7 @@
                                 </a>
                             </li>
                             <li class="nav-header">Master Data</li>
-                            @role('SuperAdmin')
+                            @role('Super-Admin')
                             <li class="nav-item">
                                 <a href="{{ route('super_admin.tenants.index') }}"
                                     class="nav-link {{ request()->routeIs('super_admin.tenants.*') ? 'active' : '' }}">
@@ -226,16 +226,17 @@
                                     <p>Tenant</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a href="/" class="nav-link">
                                     <i class="nav-icon fas fa-user-tie"></i>
                                     <p>
                                         Roles
                                     </p>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
-                                <a href="/" class="nav-link">
+                                <a href="{{ route('super_admin.users.index') }}"
+                                    class="nav-link {{ request()->routeIs('super_admin.users.*') ? 'active' : '' }}">
                                     <i class="nav-icon fas fa-users"></i>
                                     <p>
                                         Users
