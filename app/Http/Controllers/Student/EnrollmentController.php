@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Student;
 use View;
 use App\Models\Tenant;
 use App\Models\Enrollment;
-use App\Models\ClassSubject;
 use App\Models\AttendanceEntry;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Controllers\Controller;

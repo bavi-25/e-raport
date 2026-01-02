@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\TenantProfile;
 use Illuminate\Database\Eloquent\Model;
 
 class Tenant extends Model
@@ -15,4 +16,8 @@ class Tenant extends Model
         'level',
         'status',
     ];
+    public function profile()
+    {
+        return $this->hasOne(TenantProfile::class, 'tenant_id');
+    }
 }
