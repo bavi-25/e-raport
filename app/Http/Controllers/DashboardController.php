@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ClassRoom;
 use App\Models\User;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
@@ -38,7 +39,7 @@ class DashboardController extends Controller
 
         if (in_array('super_admin', $roles)) {
             $data['stats']['tenantCount'] = Tenant::count();
-            $data['stats']['userCount'] = User::where('name' ,'!=', 'Super Admin')->count();
+            $data['stats']['userCount'] = User::where('name', '!=', 'Super Admin')->count();
             $data['stats']['activeTenants'] = Tenant::where('status', true)->count();
             $data['stats']['studentsCount'] = User::whereHas('roles', function ($query) {
                 $query->where('name', 'Siswa');
@@ -55,6 +56,15 @@ class DashboardController extends Controller
         }
 
         if (in_array('kepala_sekolah', $roles)) {
+            $data['stats']['totalStudents'] = User::where('tenant_id', Auth::user()->tenant_id)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Siswa');
+                })->count();
+            $data['stats']['totalTeachers'] = User::where('tenant_id', Auth::user()->tenant_id)
+                ->whereHas('roles', function ($query) {
+                    $query->where('name', 'Guru');
+                })->count();
+            $data['stats']['totalClasses'] = ClassRoom::where('tenant_id', Auth::user()->tenant_id)->count();
             $data['widgets']['kepala_sekolah'] = [
                 'latestScores' => [],
             ];

@@ -19,21 +19,20 @@ class AcademicYearSeeder extends Seeder
             $tenants = Tenant::all();
 
             foreach ($tenants as $tenant) {
-                // contoh hardcode tahun ajaran sekarang
                 $academicYears = [
                     [
-                        'code'       => '2024/2025-Ganjil',
-                        'term'       => 'Ganjil',
-                        'start_date' => '2024-07-15',
-                        'end_date'   => '2024-12-20',
-                        'status'     => 'Active',
+                        'code' => '2025/2026-Ganjil',
+                        'term' => 'Ganjil',
+                        'start_date' => '2025-07-01',
+                        'end_date' => '2025-12-31',
+                        'status' => 'Inactive',
                     ],
                     [
-                        'code'       => '2024/2025-Genap',
-                        'term'       => 'Genap',
-                        'start_date' => '2025-01-06',
-                        'end_date'   => '2025-06-20',
-                        'status'     => 'Inactive',
+                        'code' => '2025/2026-Genap',
+                        'term' => 'Genap',
+                        'start_date' => '2026-01-04',
+                        'end_date' => '2026-06-30',
+                        'status' => 'Active',
                     ],
                 ];
 

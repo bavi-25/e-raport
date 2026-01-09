@@ -2,11 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\GradeEntry;
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Contracts\Role;
+use Database\Seeders\RoleSeeder;
+use Database\Seeders\UserSeeder;
+use Database\Seeders\TenantSeeder;
+
+use Database\Seeders\ClassRoomSeed;
+use Database\Seeders\SubjectSeeder;
+use Database\Seeders\GradeLevelSeeder;
+use Database\Seeders\AcademicYearSeeder;
+use Database\Seeders\AssessmentComponentSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,7 +29,8 @@ class DatabaseSeeder extends Seeder
             AcademicYearSeeder::class,
             GradeLevelSeeder::class,
             SubjectSeeder::class,
-
+            ClassRoomSeed::class,
+            AssessmentComponentSeeder::class,
         ]);
     }
 }
