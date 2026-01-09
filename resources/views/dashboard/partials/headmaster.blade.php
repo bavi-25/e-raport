@@ -5,7 +5,7 @@
             <span class="info-box-icon bg-info elevation-1"><i class="fas fa-graduation-cap"></i></span>
             <div class="info-box-content">
                 <span class="info-box-text">Student</span>
-                <span class="info-box-number">1,200</span>
+                <span class="info-box-number">{{ $stats['totalStudents'] }}</span>
             </div>
         </div>
     </div>
@@ -17,7 +17,7 @@
             </span>
             <div class="info-box-content">
                 <span class="info-box-text">Teacher</span>
-                <span class="info-box-number">100</span>
+                <span class="info-box-number">{{ $stats['totalTeachers'] }}</span>
             </div>
         </div>
     </div>
@@ -26,8 +26,8 @@
         <div class="info-box mb-3">
             <span class="info-box-icon bg-success elevation-1"><i class="fas fa-book-open"></i></span>
             <div class="info-box-content">
-                <span class="info-box-text">Subject</span>
-                <span class="info-box-number">50</span>
+                <span class="info-box-text">Class Room</span>
+                <span class="info-box-number">{{ $stats['totalClasses'] }}</span>
             </div>
         </div>
     </div>

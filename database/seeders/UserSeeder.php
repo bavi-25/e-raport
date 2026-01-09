@@ -83,7 +83,7 @@ class UserSeeder extends Seeder
                 }
 
                 // --- 3 Wali Kelas per tenant ---
-                for ($i = 1; $i <= 3; $i++) {
+                for ($i = 1; $i <= 18; $i++) {
                     $email = "walikelas{$i}+t{$tenant->id}@erapor.local";
 
                     $user = User::updateOrCreate(
@@ -113,8 +113,8 @@ class UserSeeder extends Seeder
                     );
                 }
 
-                // --- 3 Guru per tenant ---
-                for ($i = 1; $i <= 3; $i++) {
+                // --- 7 Guru per tenant ---
+                for ($i = 1; $i <= 7; $i++) {
                     $email = "guru{$i}+t{$tenant->id}@erapor.local";
 
                     $user = User::updateOrCreate(
@@ -144,7 +144,7 @@ class UserSeeder extends Seeder
                     );
                 }
 
-                for ($i = 1; $i <= 10; $i++) {
+                for ($i = 1; $i <= 180; $i++) {
                     $no = str_pad((string) $i, 2, '0', STR_PAD_LEFT);
                     $email = "siswa{$no}+t{$tenant->id}@erapor.local";
 
